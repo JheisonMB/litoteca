@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Litoteca · ¿Qué piedra es esta?</title>
+  <meta name="description" content="Apunta la cámara a una muestra de roca y aprende qué es, cómo se formó y con qué se confunde. Demostración académica.">
+  <meta name="theme-color" content="#f7f4ee">
+  <link rel="stylesheet" href="/assets/app.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23f7f4ee'/%3E%3Cpath d='M8 22l6-9 5 6 3-4 4 7z' fill='%231b1a17'/%3E%3Ccircle cx='21' cy='11' r='2' fill='%23c2410c'/%3E%3C/svg%3E">
+</head>
+<body>
+<div class="app">
+
+  <header class="topbar">
+    <button type="button" class="marca" id="btn-inicio" aria-label="Volver al inicio">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+        <circle cx="12" cy="12" r="9"></circle>
+        <path d="M12 3v9l7 4M3.6 16.5l7.4-4.5M20.4 16.5L13 12"></path>
+      </svg>
+      Litoteca
+    </button>
+    <button type="button" class="enlace" id="btn-historial">Mi litoteca</button>
+  </header>
+
+  <main>
+    <!-- Portada -->
+    <section id="vista-inicio" class="inicio">
+      <h1>Abre la piedra<br>que tienes en la mano.</h1>
+      <p class="bajada">Una litoteca de bolsillo: identifica la muestra y aprende qué es, cómo se formó y con qué se confunde.</p>
+
+      <button type="button" class="disparador" id="btn-disparador" aria-label="Empezar: abrir la cámara o subir una foto">
+        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="7" y="15" width="50" height="38" rx="7"></rect>
+          <circle cx="32" cy="34" r="11"></circle>
+          <path d="M23 15l3.5-6h11L41 15"></path>
+          <path d="M16 41l9-9 7 7 5-4 6 6"></path>
+          <circle cx="19" cy="24" r="1.6"></circle>
+        </svg>
+      </button>
+
+      <div class="acciones-inicio">
+        <button type="button" class="boton principal" id="btn-camara">Abrir la cámara</button>
+        <button type="button" class="boton" id="btn-subir">Subir una foto</button>
+      </div>
+
+      <p class="pie-aviso">Demostración académica de visión por computador. Orientación de campo: no sustituye el análisis de laboratorio.</p>
+    </section>
+
+    <!-- Cámara -->
+    <section id="vista-camara" class="camara" hidden>
+      <div class="camara-cabecera">
+        <button type="button" class="enlace" id="cerrar-camara">← Volver</button>
+        <span class="sincronia">Buscamos la cámara trasera</span>
+      </div>
+
+      <div id="aviso-permiso" class="aviso-permiso" hidden>
+        <h2>Sin acceso a la cámara</h2>
+        <p id="permiso-texto"></p>
+        <ul>
+          <li>Mira el icono del candado en la barra de direcciones y permite la cámara.</li>
+          <li>En iPhone, revisa Ajustes → Safari → Cámara.</li>
+          <li>También puedes seguir con una foto de tu galería.</li>
+        </ul>
+        <button type="button" class="boton principal" id="btn-subir-permiso">Usar una foto del dispositivo</button>
+      </div>
+
+      <div class="camara-marco">
+        <video id="video" playsinline muted autoplay aria-label="Vista de la cámara"></video>
+        <div class="guia" aria-hidden="true"></div>
+        <p class="camara-pista">Luz de frente · 20–30 cm · fondo neutro</p>
+      </div>
+
+      <div class="camara-controles">
+        <button type="button" class="obturador" id="btn-capturar" aria-label="Capturar la muestra"></button>
+      </div>
+    </section>
+
+    <!-- Resultado -->
+    <section id="vista-resultado" class="resultado" hidden>
+      <div id="resultado" aria-live="polite"></div>
+    </section>
+
+    <!-- Historial -->
+    <section id="vista-historial" class="historial" hidden>
+      <div class="historial-cabecera">
+        <div>
+          <h2>Mi litoteca</h2>
+          <p class="historial-sub">Tus muestras viven solo en este dispositivo.</p>
+        </div>
+        <button type="button" class="enlace" id="btn-borrar-todo" hidden>Borrar todo</button>
+      </div>
+
+      <ul class="lista" id="lista-historial"></ul>
+      <p class="vacio" id="historial-vacio">Todavía no has guardado ninguna muestra. Abre la cámara y empieza tu colección.</p>
+
+      <div class="acciones-inicio" style="margin-top:20px">
+        <button type="button" class="boton" id="btn-volver-inicio">Volver al inicio</button>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>Litoteca · Jheison Martínez · Universidad de La Salle</span>
+    <span class="metodologia" id="metodologia">9 clases · modelo en preparación · v0</span>
+  </footer>
+
+  <p class="sincronia" id="sincronia" role="status">En línea</p>
+  <p class="solo-lectores" id="anuncio" aria-live="polite"></p>
+</div>
+
+<!-- Selector cámara / archivo -->
+<dialog class="hoja" id="selector" aria-labelledby="selector-titulo">
+  <div class="hoja-cuerpo">
+    <h2 class="hoja-titulo" id="selector-titulo">¿Cómo traes la muestra?</h2>
+    <p class="hoja-texto">La foto se analiza y se descarta: no se guarda en ningún servidor.</p>
+    <div class="hoja-opciones">
+      <button type="button" class="opcion" id="elegir-camara">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <path d="M3 8.5A2.5 2.5 0 015.5 6h1.7l1.2-2h7.2l1.2 2h1.7A2.5 2.5 0 0121 8.5v9A2.5 2.5 0 0118.5 20h-13A2.5 2.5 0 013 17.5z"></path>
+          <circle cx="12" cy="13" r="4"></circle>
+        </svg>
+        <span><b>Abrir la cámara</b><span>Pide permiso y encuadra la piedra</span></span>
+      </button>
+      <button type="button" class="opcion" id="elegir-archivo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <rect x="3" y="4" width="18" height="16" rx="3"></rect>
+          <path d="M3 16l5-5 4 4 3-2 6 5"></path>
+          <circle cx="9" cy="9" r="1.4"></circle>
+        </svg>
+        <span><b>Subir una foto</b><span>Desde la galería o el escritorio</span></span>
+      </button>
+    </div>
+  </div>
+  <div class="hoja-pie">
+    <button type="button" class="enlace" onclick="document.getElementById('selector').close()">Cancelar</button>
+  </div>
+</dialog>
+
+<input type="file" id="input-archivo" accept="image/jpeg,image/png,image/webp" hidden>
+
+<script src="/assets/fichas.js"></script>
+<script src="/assets/app.js"></script>
+</body>
+</html>
