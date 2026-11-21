@@ -418,6 +418,15 @@ dialog.hoja::backdrop { background: rgba(27, 26, 23, 0.32); }
 }
 .seccion p { margin: 0; font-size: 15px; color: var(--tinta); max-width: 62ch; }
 
+/* Lámina del proceso geológico en "Cómo se formó": imagen junto al texto,
+   sin sombras ni gradientes; en móvil se apila sobre el texto. */
+.seccion-formacion { display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: flex-start; }
+.seccion-formacion h3 { flex-basis: 100%; }
+.proceso { margin: 0; padding: 6px; border: 1px solid var(--linea); background: var(--papel); flex: 0 1 240px; }
+.proceso img { display: block; width: 100%; max-width: 240px; height: auto; }
+.proceso[hidden] { display: none; }
+.seccion-formacion-texto { flex: 1 1 220px; min-width: 0; }
+
 .gemela {
   margin-top: 16px;
   padding: 13px 15px;

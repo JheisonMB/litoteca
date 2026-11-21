@@ -70,6 +70,17 @@ for (const id of esperadas) {
   if (!fs.existsSync(path.join(".", f.ilustracion))) errores.push(`${id}: falta el archivo .${f.ilustracion}`);
 }
 
+// Cada ficha integra su lámina del proceso geológico: ruta canónica,
+// archivo presente en el repo y alt descriptivo en español.
+for (const id of esperadas) {
+  const f = fichas[id];
+  if (!f) continue;
+  const lamina = `/assets/rocas/procesos/${id}.webp`;
+  if (f.proceso !== lamina) { errores.push(`${id}: proceso debe ser ${lamina}`); continue; }
+  if (!fs.existsSync(path.join(".", f.proceso))) errores.push(`${id}: falta el archivo .${f.proceso}`);
+  if (!f.procesoAlt || !String(f.procesoAlt).trim()) errores.push(`${id}: falta procesoAlt`);
+}
+
 // El mock de desarrollo debe cubrir exactamente las mismas 9 categorías.
 global.window.location = { search: "" };
 require("./assets/mock.js");

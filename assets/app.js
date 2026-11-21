@@ -303,13 +303,26 @@
       id: id, nombre: id, tecnico: id, origen: "sedimentario",
       que: "Todavía no hay ficha curada para esta clase.",
       formacion: "", donde: "", usos: "", dato: "",
-      gemela: null, criterio: "", wiki: null, ilustracion: null
+      gemela: null, criterio: "", wiki: null, ilustracion: null,
+      proceso: null, procesoAlt: ""
     };
   }
 
   function seccion(titulo, texto) {
     if (!texto) return "";
     return '<section class="seccion"><h3>' + esc(titulo) + "</h3><p>" + esc(texto) + "</p></section>";
+  }
+
+  function formacionBloque(ficha) {
+    if (!ficha.formacion) return "";
+    var lamina = ficha.proceso
+      ? '<figure class="proceso"><img src="' + esc(ficha.proceso) + '" alt="' +
+        esc(ficha.procesoAlt || ("Ilustración del proceso de formación de " + ficha.nombre)) +
+        '" loading="lazy" decoding="async"></figure>'
+      : "";
+    return '<section class="seccion seccion-formacion"><h3>Cómo se formó</h3>' +
+      lamina + '<div class="seccion-formacion-texto"><p>' + esc(ficha.formacion) +
+      "</p></div></section>";
   }
 
   function htmlFicha(ficha, respuesta, foto, conAcciones) {
@@ -365,7 +378,7 @@
         "</div>" +
         '<div class="ficha-cuerpo">' +
           seccion("Qué es", ficha.que) +
-          seccion("Cómo se formó", ficha.formacion) +
+          formacionBloque(ficha) +
           seccion("Dónde se encuentra", ficha.donde) +
           seccion("Para qué se usa", ficha.usos) +
           seccion("Dato curioso", ficha.dato) +
@@ -397,6 +410,11 @@
     }
 
     dom.resultado.innerHTML = avisos + htmlFicha(ficha, respuesta, estado.foto, !!(opciones && opciones.conAcciones !== false));
+
+    dom.resultado.querySelectorAll(".proceso img").forEach(function (img) {
+      img.addEventListener("error", function () { img.closest(".proceso").hidden = true; });
+      if (img.complete && img.naturalWidth === 0) img.closest(".proceso").hidden = true;
+    });
 
     var otra = $("#btn-otra");
     if (otra) otra.addEventListener("click", function () { abrirSelector(); });
