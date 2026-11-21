@@ -222,7 +222,7 @@
     anunciar("Analizando la muestra.");
 
     predecir(blob)
-      .then(function (respuesta) { pintarResultado(respuesta, { guardar: true }); })
+      .then(function (respuesta) { pintarResultado(respuesta, { conAcciones: true }); })
       .catch(function (error) { mostrarError(error.mensaje || "No pudimos analizar la muestra.", true); });
   }
 
@@ -312,23 +312,9 @@
     return '<section class="seccion"><h3>' + esc(titulo) + "</h3><p>" + esc(texto) + "</p></section>";
   }
 
-  function pintarResultado(respuesta, opciones) {
-    var ficha = fichaDe(respuesta.top);
+  function htmlFicha(ficha, respuesta, foto, conAcciones) {
     var origen = ficha.origen;
     var predicciones = respuesta.predicciones || [];
-    var foto = estado.foto;
-    estado.respuesta = respuesta;
-
-    var avisos = "";
-    if (respuesta.demo) {
-      avisos +=
-        '<p class="banda demo"><strong>Modo demostración.</strong> El modelo todavía no está ' +
-        "entrenado con las 9 clases: esta ficha se elige al azar para revisar el diseño, no es una predicción.</p>";
-    } else if (respuesta.bajaConfianza) {
-      avisos +=
-        '<p class="banda"><strong>Poco segura.</strong> La confianza no llega al 70 %. ' +
-        "Prueba con más luz, fondo neutro y a 20–30 cm.</p>";
-    }
 
     var top3 = predicciones.slice(0, 3).map(function (p) {
       return "<li><span>" + esc(p.nombre) + "</span><span>" + porcentaje(p.p) + "</span></li>";
@@ -346,12 +332,15 @@
         encodeURIComponent(ficha.wiki.replace(/ /g, "_")) + '" target="_blank" rel="noopener">Wikipedia (CC BY-SA 4.0)</a>.</p>'
       : "";
 
-    var botonGuardar = opciones && opciones.guardar
-      ? '<button type="button" class="boton principal" id="btn-guardar">Guardar en mi litoteca</button>'
+    var acciones = conAcciones
+      ? '<div class="ficha-acciones">' +
+          '<button type="button" class="boton" id="btn-otra">Escanear otra</button>' +
+          '<button type="button" class="boton principal" id="btn-guardar">Guardar en mi litoteca</button>' +
+          '<button type="button" class="boton tenue" id="btn-compartir">Compartir</button>' +
+        "</div>"
       : "";
 
-    dom.resultado.innerHTML =
-      avisos +
+    return (
       '<article class="ficha">' +
         '<header class="ficha-cabeza">' +
           (foto ? '<img class="ficha-foto" src="' + foto + '" alt="Muestra fotografiada">' : "") +
@@ -363,9 +352,10 @@
         "</header>" +
         '<div class="confianza">' +
           '<div class="confianza-fila"><span>Confianza · top-1</span><span class="confianza-valor">' +
-            porcentaje(respuesta.confianza) + "</span></div>" +
-          '<div class="barra" role="img" aria-label="Confianza ' + porcentaje(respuesta.confianza) + '">' +
-            '<i style="width:' + Math.max(2, Math.round(respuesta.confianza * 100)) + '%"></i></div>' +
+            (typeof respuesta.confianza === "number" ? porcentaje(respuesta.confianza) : "Desconocida") + "</span></div>" +
+          '<div class="barra" role="img" aria-label="Confianza ' +
+            (typeof respuesta.confianza === "number" ? porcentaje(respuesta.confianza) : "desconocida") + '">' +
+            '<i style="width:' + Math.max(2, Math.round((respuesta.confianza || 0) * 100)) + '%"></i></div>' +
           (top3 ? '<details class="top3"><summary>Tres primeras lecturas</summary><ol>' + top3 + "</ol></details>" : "") +
         "</div>" +
         '<div class="ficha-cuerpo">' +
@@ -377,12 +367,31 @@
           bloqueGemela +
           fuente +
         "</div>" +
-        '<div class="ficha-acciones">' +
-          '<button type="button" class="boton" id="btn-otra">Escanear otra</button>' +
-          botonGuardar +
-          '<button type="button" class="boton tenue" id="btn-compartir">Compartir</button>' +
-        "</div>" +
-      "</article>";
+        acciones +
+      "</article>"
+    );
+  }
+
+  function pintarResultado(respuesta, opciones) {
+    var ficha = fichaDe(respuesta.top);
+    estado.respuesta = respuesta;
+
+    var avisos = "";
+    if (respuesta.mock) {
+      avisos +=
+        '<p class="banda demo"><strong>Mock de desarrollo.</strong> Categoría forzada desde `?mock=1`: ' +
+        "ni la imagen ni el modelo intervienen. Sirve para revisar el diseño de la ficha.</p>";
+    } else if (respuesta.demo) {
+      avisos +=
+        '<p class="banda demo"><strong>Modo demostración.</strong> El modelo todavía no está ' +
+        "entrenado con las 9 clases: esta ficha se elige al azar para revisar el diseño, no es una predicción.</p>";
+    } else if (respuesta.bajaConfianza) {
+      avisos +=
+        '<p class="banda"><strong>Poco segura.</strong> La confianza no llega al 70 %. ' +
+        "Prueba con más luz, fondo neutro y a 20–30 cm.</p>";
+    }
+
+    dom.resultado.innerHTML = avisos + htmlFicha(ficha, respuesta, estado.foto, !!(opciones && opciones.conAcciones !== false));
 
     var otra = $("#btn-otra");
     if (otra) otra.addEventListener("click", function () { abrirSelector(); });
@@ -406,16 +415,64 @@
     if (irA) {
       irA.addEventListener("click", function () {
         var destino = fichaDe(irA.getAttribute("data-ir-a"));
-        estado.respuesta = {
-          demo: respuesta.demo, top: destino.id, confianza: respuesta.confianza,
-          bajaConfianza: true, ambiguo: false, predicciones: respuesta.predicciones,
-          modelo: respuesta.modelo
+        var siguiente = {
+          mock: respuesta.mock, demo: respuesta.demo, top: destino.id,
+          confianza: respuesta.confianza, bajaConfianza: true, ambiguo: false,
+          predicciones: respuesta.predicciones, modelo: respuesta.modelo
         };
-        pintarResultado(estado.respuesta, { guardar: false });
+        estado.respuesta = siguiente;
+        pintarResultado(siguiente, { conAcciones: false });
+        montarTiraMock();
       });
     }
 
-    anunciar(ficha.nombre + ". Confianza " + porcentaje(respuesta.confianza) + ".");
+    montarTiraMock();
+    anunciar(ficha.nombre + (typeof respuesta.confianza === "number" ? ". Confianza " + porcentaje(respuesta.confianza) : ""));
+  }
+
+  /* Tira de desarrollo: solo con ?mock=1, para revisar cada ficha con una foto. */
+  function montarTiraMock() {
+    var mock = window.LITOTECA_MOCK;
+    if (!mock || !mock.activo() || !estado.respuesta) return;
+
+    var tira = document.createElement("div");
+    tira.className = "tira-mock";
+    tira.setAttribute("role", "group");
+    tira.setAttribute("aria-label", "Mock de desarrollo: elegir categoría");
+
+    var rotulo = document.createElement("span");
+    rotulo.className = "tira-mock-rotulo";
+    rotulo.textContent = "Mock";
+    tira.appendChild(rotulo);
+
+    mock.categorias().forEach(function (id) {
+      var boton = document.createElement("button");
+      boton.type = "button";
+      boton.className = "tira-mock-boton";
+      boton.textContent = fichaDe(id).nombre;
+      boton.setAttribute("aria-pressed", String(id === estado.respuesta.top));
+      boton.addEventListener("click", function () {
+        pintarResultado(mock.respuesta(id), { conAcciones: true });
+        anunciar("Mock: " + fichaDe(id).nombre + ".");
+      });
+      tira.appendChild(boton);
+    });
+
+    dom.resultado.appendChild(tira);
+  }
+
+  /* Galería de desarrollo: las nueve fichas seguidas, con ?galeria=1. */
+  function abrirGaleria() {
+    var mock = window.LITOTECA_MOCK;
+    if (!mock) return;
+    mostrarVista("resultado");
+    var piezas = mock.categorias().map(function (id) {
+      return '<div class="galeria-item">' + htmlFicha(fichaDe(id), mock.respuesta(id), estado.foto, false) + "</div>";
+    });
+    dom.resultado.innerHTML =
+      '<p class="banda demo"><strong>Galería de desarrollo.</strong> Las nueve fichas con confianza simulada, ' +
+      "para revisar el diseño de las tarjetas antes de entrenar el modelo.</p>" + piezas.join("");
+    anunciar("Galería de desarrollo con las nueve fichas.");
   }
 
   function mostrarError(mensaje, reintentar) {
@@ -551,7 +608,7 @@
           demo: false, modelo: { iteracion: "historial" }, top: entrada.clase,
           confianza: entrada.p, margen: 1, bajaConfianza: entrada.p < 0.7, ambiguo: false,
           predicciones: [{ id: entrada.clase, nombre: fichaDe(entrada.clase).nombre, p: entrada.p }]
-        }, { guardar: false });
+        }, { conAcciones: false });
       });
     });
 
@@ -639,6 +696,16 @@
 
   actualizarConexion();
   pintarHistorial();
-  dom.metodologia.textContent = "9 clases · modelo en preparación · v0";
-  mostrarVista("inicio");
+
+  var mock = window.LITOTECA_MOCK;
+  var enMock = !!(mock && mock.activo());
+  dom.metodologia.textContent = enMock
+    ? "9 clases · mock de desarrollo · v0"
+    : "9 clases · modelo en preparación · v0";
+
+  if (mock && mock.galeria()) {
+    abrirGaleria();
+  } else {
+    mostrarVista("inicio");
+  }
 })();

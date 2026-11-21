@@ -21,6 +21,19 @@ Mientras no haya modelo, la página funciona en **modo demostración**: elige un
 ficha de forma determinista para poder revisar el diseño, y lo declara en una
 banda visible. No finge una predicción.
 
+## Desarrollo sin modelo (mock)
+
+Dos interruptores por URL, solo para diseño; la URL publicada no los lleva:
+
+| URL | Qué hace |
+|---|---|
+| `/?galeria=1` | Las 9 fichas seguidas con confianza simulada, para revisar las tarjetas |
+| `/?mock=1` | Tras subir una foto, una tira fuerza cualquiera de las 9 categorías |
+
+El mock vive en `assets/mock.js` y devuelve objetos con la forma exacta del
+contrato de `/api/predict`, así que lo que se diseña con él es lo que verá la
+página cuando el modelo exista. La banda de la ficha lo declara siempre.
+
 ## Correr en local
 
 ```bash
@@ -63,3 +76,13 @@ bloquea East US y solo allí hay SKU de `CustomVision.Training/Prediction`.
 ```bash
 bash scripts/gates.sh    # GATES PASSED
 ```
+
+Ocho bloques, sin saltos: sintaxis de todo el JS · ids de `app.js` contra el
+HTML · integridad de las 9 fichas y cobertura del mock · recursos y umbrales
+del contrato · **`scripts/prueba_contrato.mjs`** (la Function real con `fetch`
+falso: normalización de etiquetas, ambigüedad, baja confianza, 400/413/429/503)
+· estructura y accesibilidad del HTML (ids únicos, un `h1`, `lang`, `viewport`,
+`alt`, botones etiquetados, `aria-live`) · reglas visuales del blueprint (sin
+sombras, sin degradados de UI, tokens, `prefers-reduced-motion`) · presupuesto
+de JS · **`scripts/prueba_navegador.py`** (Chrome headless: subida, ficha, banda
+demo, guardado en `localStorage`, historial).
