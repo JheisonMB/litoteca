@@ -303,7 +303,7 @@
       id: id, nombre: id, tecnico: id, origen: "sedimentario",
       que: "Todavía no hay ficha curada para esta clase.",
       formacion: "", donde: "", usos: "", dato: "",
-      gemela: null, criterio: "", wiki: null
+      gemela: null, criterio: "", wiki: null, ilustracion: null
     };
   }
 
@@ -325,6 +325,10 @@
       ? '<div class="gemela"><h3>No la confundas con</h3><p><strong>' + esc(gemela.nombre) + ".</strong> " +
         esc(ficha.criterio || "") + '</p><button type="button" data-ir-a="' + esc(gemela.id) + '">Ver la ficha de ' +
         esc(gemela.nombre).toLowerCase() + " →</button></div>"
+      : "";
+
+    var ilustracion = ficha.ilustracion
+      ? '<figure class="ficha-ilustracion"><img src="' + esc(ficha.ilustracion) + '" alt="" loading="lazy" decoding="async"></figure>'
       : "";
 
     var fuente = ficha.wiki
@@ -350,6 +354,7 @@
             '<span class="chip ' + esc(origen) + '">' + esc(ORIGEN_TEXTO[origen] || origen) + "</span>" +
           "</div>" +
         "</header>" +
+        ilustracion +
         '<div class="confianza">' +
           '<div class="confianza-fila"><span>Confianza · top-1</span><span class="confianza-valor">' +
             (typeof respuesta.confianza === "number" ? porcentaje(respuesta.confianza) : "Desconocida") + "</span></div>" +
@@ -579,11 +584,14 @@
     dom.borrarTodo.hidden = lista.length === 0;
     dom.historialLista.innerHTML = lista.map(function (entrada) {
       var ficha = fichaDe(entrada.clase);
+      var thumb = entrada.miniatura
+        ? '<img src="' + entrada.miniatura + '" alt="Miniatura de ' + esc(ficha.nombre) + '">'
+        : (ficha.ilustracion
+          ? '<img class="entrada-ilustracion" src="' + esc(ficha.ilustracion) + '" alt="" loading="lazy" decoding="async">'
+          : '<span class="entrada-hueco" aria-hidden="true"></span>');
       return (
         '<li><button type="button" class="entrada" data-abrir="' + esc(entrada.id) + '">' +
-          (entrada.miniatura
-            ? '<img src="' + entrada.miniatura + '" alt="Miniatura de ' + esc(ficha.nombre) + '">'
-            : '<img src="" alt="">') +
+          thumb +
           '<span class="entrada-texto">' +
             '<span class="entrada-nombre">' + esc(ficha.nombre) + "</span>" +
             '<span class="entrada-meta">' + esc(fechaLarga(entrada.fecha)) + " · " +

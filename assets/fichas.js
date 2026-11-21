@@ -5,6 +5,7 @@
 window.LITOTECA_FICHAS = {
   basalt: {
     id: "basalt", nombre: "Basalto", tecnico: "Basalt", origen: "igneo",
+    ilustracion: "/assets/rocas/basalt.svg",
     wiki: "Basalto",
     que: "Roca volcánica oscura y de grano tan fino que los cristales no se ven a simple vista. Es la roca ígnea más común de la superficie terrestre.",
     formacion: "Se forma cuando la lava se enfría rápido en superficie: los minerales no tienen tiempo de crecer y quedan como una masa microcristalina.",
@@ -16,6 +17,7 @@ window.LITOTECA_FICHAS = {
   },
   "olivine-basalt": {
     id: "olivine-basalt", nombre: "Basalto olivínico", tecnico: "Olivine basalt", origen: "igneo",
+    ilustracion: "/assets/rocas/olivine-basalt.svg",
     wiki: "Basalto",
     que: "Basalto que conserva fenocristales de olivino, un mineral verde oliva que aquí se ve a simple vista como puntos o granitos.",
     formacion: "Proviene de magmas primarios, poco evolucionados: el olivino cristalizó en profundidad y la lava lo subió rápido, sin tiempo para reabsorberlo.",
@@ -27,6 +29,7 @@ window.LITOTECA_FICHAS = {
   },
   chert: {
     id: "chert", nombre: "Sílex", tecnico: "Chert", origen: "sedimentario",
+    ilustracion: "/assets/rocas/chert.svg",
     wiki: "Sílex",
     que: "Roca silícea criptocristalina, muy dura, de fractura concoidal y brillo entre vítreo y céreo.",
     formacion: "La sílice disuelta en el agua precipita en el sedimento, a menudo rellenando cavidades o sustituyendo caliza.",
@@ -38,6 +41,7 @@ window.LITOTECA_FICHAS = {
   },
   clay: {
     id: "clay", nombre: "Arcilla", tecnico: "Clay", origen: "sedimentario",
+    ilustracion: "/assets/rocas/clay.svg",
     wiki: "Arcilla",
     que: "Sedimento de grano finísimo (menos de 4 µm) formado por minerales laminares; es plástico cuando está húmedo.",
     formacion: "Nace de la meteorización química de feldespatos y micas; el agua arrastra esos minerales y los deposita en zonas tranquilas.",
@@ -49,6 +53,7 @@ window.LITOTECA_FICHAS = {
   },
   conglomerate: {
     id: "conglomerate", nombre: "Conglomerado", tecnico: "Conglomerate", origen: "sedimentario",
+    ilustracion: "/assets/rocas/conglomerate.svg",
     wiki: "Conglomerado (geología)",
     que: "Roca sedimentaria formada por cantos redondeados de más de 2 mm cementados entre sí por una matriz más fina.",
     formacion: "El agua transporta grava durante kilómetros, la redondea y la deposita en ríos o abanicos; después un cemento la une.",
@@ -60,6 +65,7 @@ window.LITOTECA_FICHAS = {
   },
   diatomite: {
     id: "diatomite", nombre: "Diatomita", tecnico: "Diatomite", origen: "sedimentario",
+    ilustracion: "/assets/rocas/diatomite.svg",
     wiki: "Diatomita",
     que: "Roca silícea blanca, porosa y muy ligera, compuesta por los esqueletos microscópicos de diatomeas.",
     formacion: "En lagos y mares ricos en sílice, las diatomeas mueren, sus frústulas caen y se acumulan en capas de cientos de metros.",
@@ -71,6 +77,7 @@ window.LITOTECA_FICHAS = {
   },
   gypsum: {
     id: "gypsum", nombre: "Yeso", tecnico: "Gypsum", origen: "sedimentario",
+    ilustracion: "/assets/rocas/gypsum.svg",
     wiki: "Yeso",
     que: "Sulfato cálcico hidratado, blando (dureza 2) y a menudo blanco, incoloro o algo rosado; puede ser fibroso o sacaroideo.",
     formacion: "Evaporita: el agua de lagunas saladas se evapora y el sulfato precipita junto a la halita.",
@@ -82,6 +89,7 @@ window.LITOTECA_FICHAS = {
   },
   shale: {
     id: "shale", nombre: "Lutita", tecnico: "Shale (mudstone)", origen: "sedimentario",
+    ilustracion: "/assets/rocas/shale.svg",
     wiki: "Lutita",
     que: "Roca sedimentaria de grano fino, litificada, que se parte en láminas finas paralelas (fisilidad).",
     formacion: "El lodo se deposita en aguas tranquilas y se compacta hasta convertirse en roca; la orientación de las arcillas crea las láminas.",
@@ -93,6 +101,7 @@ window.LITOTECA_FICHAS = {
   },
   "siliceous-sinter": {
     id: "siliceous-sinter", nombre: "Geiserita", tecnico: "Siliceous sinter", origen: "sedimentario",
+    ilustracion: "/assets/rocas/siliceous-sinter.svg",
     wiki: "Geiserita",
     que: "Depósito de sílice opalina que precipita alrededor de surgencias termales y géiseres; suele ser poroso, blanco y en capas.",
     formacion: "El agua caliente profunda disuelve sílice; al salir y enfriarse, la precipita alrededor del brote y forma terrazas y costras.",

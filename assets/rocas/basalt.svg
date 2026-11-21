@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" fill="none" stroke-linecap="round" stroke-linejoin="round">
+<defs><style>:root{--ink:#1b1a17;--ink2:#57534b;--ink3:#8b857a;--igneo:#c2410c;--sed:#a16207;--paper:#f7f4ee;} .ink{stroke:var(--ink);fill:none} .fill-paper{fill:var(--paper)} .fill-igneo{fill:#fbe6da} .fill-sed{fill:#f7ecd2} .muted{stroke:var(--ink2);fill:none} .soft{stroke:var(--ink3);fill:none}</style></defs>
+
+<rect width="512" height="512" fill="transparent"/>
+<g transform="translate(56,72)">
+  <path class="fill-igneo ink" stroke-width="4" d="M72 40 L328 28 L372 96 L360 292 L296 340 L104 344 L28 280 L36 112 Z"/>
+  <path class="muted" stroke-width="2.5" d="M132 64 L168 128 L124 196 L176 252 L132 312"/>
+  <path class="muted" stroke-width="2.5" d="M224 52 L252 120 L212 188 L260 248 L220 316"/>
+  <path class="muted" stroke-width="2.5" d="M300 76 L320 148 L276 212 L316 276"/>
+  <path class="soft" stroke-width="2" d="M72 156 L124 196 L76 236"/>
+  <path class="soft" stroke-width="2" d="M168 128 L212 188 L176 252"/>
+  <path class="soft" stroke-width="2" d="M252 120 L276 212 L260 248"/>
+  <ellipse cx="200" cy="360" rx="150" ry="18" fill="rgba(27,26,23,0.07)" stroke="none"/>
+</g>
+</svg>

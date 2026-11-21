@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" fill="none" stroke-linecap="round" stroke-linejoin="round">
+<defs><style>:root{--ink:#1b1a17;--ink2:#57534b;--ink3:#8b857a;--igneo:#c2410c;--sed:#a16207;--paper:#f7f4ee;} .ink{stroke:var(--ink);fill:none} .fill-paper{fill:var(--paper)} .fill-igneo{fill:#fbe6da} .fill-sed{fill:#f7ecd2} .muted{stroke:var(--ink2);fill:none} .soft{stroke:var(--ink3);fill:none}</style></defs>
+
+<rect width="512" height="512" fill="transparent"/>
+<g transform="translate(56,72)">
+  <path class="fill-sed ink" stroke-width="4" d="M48 280 C40 240 56 196 92 164 C120 140 140 132 168 136 C192 112 232 104 268 120 C304 136 328 164 340 200 C352 236 344 276 308 304 C272 332 216 340 160 332 C104 324 56 308 48 280 Z"/>
+  <path class="soft" stroke-width="2" d="M80 248 C132 232 180 236 232 248 C284 260 316 252 332 236"/>
+  <path class="soft" stroke-width="2" d="M92 212 C140 196 188 200 236 212 C284 224 312 216 324 204"/>
+  <path class="soft" stroke-width="2" d="M120 180 C160 168 200 172 244 184 C280 194 300 188 312 178"/>
+  <g class="soft" stroke-width="1.5">
+    <circle cx="136" cy="260" r="7"/><circle cx="196" cy="272" r="9"/><circle cx="256" cy="268" r="6"/><circle cx="292" cy="252" r="7"/>
+  </g>
+  <ellipse cx="196" cy="350" rx="145" ry="18" fill="rgba(27,26,23,0.07)" stroke="none"/>
+</g>
+</svg>

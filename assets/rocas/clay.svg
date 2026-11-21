@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" fill="none" stroke-linecap="round" stroke-linejoin="round">
+<defs><style>:root{--ink:#1b1a17;--ink2:#57534b;--ink3:#8b857a;--igneo:#c2410c;--sed:#a16207;--paper:#f7f4ee;} .ink{stroke:var(--ink);fill:none} .fill-paper{fill:var(--paper)} .fill-igneo{fill:#fbe6da} .fill-sed{fill:#f7ecd2} .muted{stroke:var(--ink2);fill:none} .soft{stroke:var(--ink3);fill:none}</style></defs>
+
+<rect width="512" height="512" fill="transparent"/>
+<g transform="translate(60,86)">
+  <path class="fill-sed ink" stroke-width="4" d="M56 260 C24 236 30 170 72 132 C112 92 172 72 236 76 C300 80 348 116 360 164 C374 214 344 268 288 292 C232 316 132 304 88 284 Z"/>
+  <path class="soft" stroke-width="2" d="M90 156 C150 144 210 148 270 164"/>
+  <path class="soft" stroke-width="2" d="M80 196 C150 184 220 188 290 204"/>
+  <path class="soft" stroke-width="2" d="M96 236 C156 224 220 228 276 240"/>
+  <ellipse cx="200" cy="326" rx="150" ry="18" fill="rgba(27,26,23,0.07)" stroke="none"/>
+</g>
+</svg>

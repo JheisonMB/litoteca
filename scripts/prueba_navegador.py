@@ -54,6 +54,7 @@ PRUEBA = """
   anotar('chip de origen', /Ignea|Sedimentaria/.test((document.querySelector('.chip') || {}).textContent || ''));
   anotar('barra de confianza', /%/.test(((document.querySelector('.barra i') || {}).style || {}).width || ''));
   anotar('banda de demostracion', !!document.querySelector('.banda.demo'));
+  anotar('ilustracion de roca', !!document.querySelector('.ficha-ilustracion img'));
   anotar('bloque de gemela', !!document.querySelector('[data-ir-a]'));
   anotar('secciones de ficha', document.querySelectorAll('.seccion h3').length >= 5);
   anotar('botones de accion', !!document.getElementById('btn-compartir') && !!document.getElementById('btn-otra'));

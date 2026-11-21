@@ -59,6 +59,17 @@ for (const id of esperadas) {
 const sobrantes = Object.keys(fichas).filter((id) => !esperadas.includes(id));
 if (sobrantes.length) errores.push("fichas de más: " + sobrantes.join(", "));
 
+// Cada ficha declara su ilustración canónica y el archivo existe en el repo.
+const fs = require("fs");
+const path = require("path");
+for (const id of esperadas) {
+  const f = fichas[id];
+  if (!f) continue;
+  const esperado = `/assets/rocas/${id}.svg`;
+  if (f.ilustracion !== esperado) { errores.push(`${id}: ilustracion debe ser ${esperado}`); continue; }
+  if (!fs.existsSync(path.join(".", f.ilustracion))) errores.push(`${id}: falta el archivo .${f.ilustracion}`);
+}
+
 // El mock de desarrollo debe cubrir exactamente las mismas 9 categorías.
 global.window.location = { search: "" };
 require("./assets/mock.js");

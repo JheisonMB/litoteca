@@ -331,6 +331,19 @@ dialog.hoja::backdrop { background: rgba(27, 26, 23, 0.32); }
   border: 1px solid var(--linea);
   flex: none;
 }
+.ficha-ilustracion {
+  margin: 0;
+  background: var(--papel);
+  border-bottom: 1px solid var(--linea);
+  padding: 22px 20px 18px;
+  display: grid;
+  place-items: center;
+}
+.ficha-ilustracion img {
+  width: min(260px, 62vw);
+  height: auto;
+  display: block;
+}
 .ficha-titulos { flex: 1; min-width: 0; }
 .ficha-nombre {
   font-family: var(--serif);
@@ -507,6 +520,18 @@ dialog.hoja::backdrop { background: rgba(27, 26, 23, 0.32); }
   height: 54px;
   border-radius: 9px;
   object-fit: cover;
+  border: 1px solid var(--linea);
+  flex: none;
+  background: var(--papel-2);
+}
+.entrada img.entrada-ilustracion {
+  object-fit: contain;
+  padding: 5px;
+}
+.entrada-hueco {
+  width: 54px;
+  height: 54px;
+  border-radius: 9px;
   border: 1px solid var(--linea);
   flex: none;
   background: var(--papel-2);

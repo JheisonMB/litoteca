@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" fill="none" stroke-linecap="round" stroke-linejoin="round">
+<defs><style>:root{--ink:#1b1a17;--ink2:#57534b;--ink3:#8b857a;--igneo:#c2410c;--sed:#a16207;--paper:#f7f4ee;} .ink{stroke:var(--ink);fill:none} .fill-paper{fill:var(--paper)} .fill-igneo{fill:#fbe6da} .fill-sed{fill:#f7ecd2} .muted{stroke:var(--ink2);fill:none} .soft{stroke:var(--ink3);fill:none}</style></defs>
+
+<rect width="512" height="512" fill="transparent"/>
+<g transform="translate(72,58)">
+  <path class="fill-sed ink" stroke-width="4" d="M88 320 L40 240 L80 120 L160 48 L256 60 L320 136 L304 264 L232 332 Z"/>
+  <path class="muted" stroke-width="2" d="M160 48 L152 140 L120 220 L140 300"/>
+  <path class="muted" stroke-width="2" d="M196 56 L196 148 L172 232 L188 316"/>
+  <path class="muted" stroke-width="2" d="M232 72 L236 156 L220 236 L228 320"/>
+  <path class="soft" stroke-width="1.8" d="M120 96 L196 148 L280 112"/>
+  <path class="soft" stroke-width="1.8" d="M104 180 L172 232 L276 196"/>
+  <ellipse cx="184" cy="350" rx="136" ry="18" fill="rgba(27,26,23,0.07)" stroke="none"/>
+</g>
+</svg>
