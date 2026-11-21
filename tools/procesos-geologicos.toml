@@ -11,60 +11,60 @@ name = "basalt"
 seed = 101
 width = 1344
 height = 768
-prompt = "Scientific cross-section illustration of basalt formation, glowing orange lava erupting from a volcanic fissure onto the surface, cooling rapidly into dark fine-grained black volcanic rock, small crystal structure implied, cutaway earth layers, educational geology diagram style, warm parchment background, muted ink and ochre palette, clean composition, no people"
+prompt = "Scientific cross-section illustration of basalt formation, glowing orange lava erupting from a volcanic fissure onto the surface, cooling rapidly into dark fine-grained black volcanic rock, small crystal structure implied, cutaway earth layers, educational geology diagram style, warm parchment background, muted ink and ochre palette, clean composition, purely visual, no writing, no numbers, no inscriptions, no characters, no glyphs, no people"
 
 [[inputs.image]]
 name = "olivine-basalt"
 seed = 102
 width = 1344
 height = 768
-prompt = "Scientific cross-section illustration of olivine basalt formation, deep magma chamber with green olivine crystals growing underground, then magma rising quickly through a volcanic conduit and erupting at surface, dark basalt matrix with visible green crystal grains, cutaway geology diagram, warm parchment background, muted ink green and ochre palette, clean educational composition"
+prompt = "Scientific cross-section illustration of olivine basalt formation, deep magma chamber with green olivine crystals growing underground, then magma rising quickly through a volcanic conduit and erupting at surface, dark basalt matrix with visible green crystal grains, cutaway geology diagram, warm parchment background, muted ink green and ochre palette, clean educational composition, purely visual, no writing, no numbers, no inscriptions, no characters, no glyphs"
 
 [[inputs.image]]
 name = "chert"
 seed = 103
 width = 1344
 height = 768
-prompt = "Scientific cross-section illustration of chert formation, silica-rich water percolating through marine limestone sediment layers, silica precipitating and replacing cavities forming hard dense nodules with conchoidal fracture, underwater sedimentary basin, educational geology diagram, warm parchment background, muted earth tones and gray-blue palette, clean composition"
+prompt = "Scientific cross-section illustration of chert formation, silica-rich water percolating through marine limestone sediment layers, silica precipitating and replacing cavities forming hard dense nodules with conchoidal fracture, underwater sedimentary basin, educational geology diagram, warm parchment background, muted earth tones and gray-blue palette, clean composition, purely visual, no writing, no numbers, no inscriptions, no characters, no glyphs"
 
 [[inputs.image]]
 name = "clay"
 seed = 104
 width = 1344
 height = 768
-prompt = "Scientific cross-section illustration of clay formation, granite hillside weathering chemically, feldspar and mica breaking down into fine particles, rainwater transporting tiny sediments into a calm lake basin where they settle in thin horizontal layers, educational geology diagram, warm parchment background, muted brown ochre and blue-gray palette, clean composition"
+prompt = "Scientific cross-section illustration of clay formation, granite hillside weathering chemically, feldspar and mica breaking down into fine particles, rainwater transporting tiny sediments into a calm lake basin where they settle in thin horizontal layers, educational geology diagram, warm parchment background, muted brown ochre and blue-gray palette, clean composition, purely visual, no writing, no numbers, no inscriptions, no characters, no glyphs"
 
 [[inputs.image]]
 name = "conglomerate"
 seed = 105
 width = 1344
 height = 768
-prompt = "Scientific cross-section illustration of conglomerate formation, mountain river carrying rounded pebbles and cobbles downstream, stones becoming smooth by transport, depositing in an alluvial fan, later cemented together by mineral matrix into solid rock, educational geology diagram, warm parchment background, muted earth tones, clean composition"
+prompt = "Scientific cross-section illustration of conglomerate formation, mountain river carrying rounded pebbles and cobbles downstream, stones becoming smooth by transport, depositing in an alluvial fan, later cemented together by mineral matrix into solid rock, educational geology diagram, warm parchment background, muted earth tones, clean composition, purely visual, no writing, no numbers, no inscriptions, no characters, no glyphs"
 
 [[inputs.image]]
 name = "diatomite"
 seed = 106
 width = 1344
 height = 768
-prompt = "Scientific cross-section illustration of diatomite formation, calm silica-rich lake with microscopic diatom algae floating in water, tiny ornate silica shells sinking to the lake bottom accumulating as thick pale white porous layers over time, educational geology diagram, warm parchment background, muted pale cream blue and ochre palette, clean composition"
+prompt = "Scientific cross-section illustration of diatomite formation, calm silica-rich lake with microscopic diatom algae floating in water, tiny ornate silica shells sinking to the lake bottom accumulating as thick pale white porous layers over time, educational geology diagram, warm parchment background, muted pale cream blue and ochre palette, clean composition, purely visual, no writing, no numbers, no inscriptions, no characters, no glyphs"
 
 [[inputs.image]]
 name = "gypsum"
 seed = 107
 width = 1344
 height = 768
-prompt = "Scientific cross-section illustration of gypsum formation, shallow saline lagoon under hot sun, water evaporating leaving crystalline mineral deposits, soft white gypsum crystals precipitating in layers with halite nearby, arid evaporite basin, educational geology diagram, warm parchment background, muted pale ochre and white palette, clean composition"
+prompt = "Scientific cross-section illustration of gypsum formation, shallow saline lagoon under hot sun, water evaporating leaving crystalline mineral deposits, soft white gypsum crystals precipitating in layers with halite nearby, arid evaporite basin, educational geology diagram, warm parchment background, muted pale ochre and white palette, clean composition, purely visual, no writing, no numbers, no inscriptions, no characters, no glyphs"
 
 [[inputs.image]]
 name = "shale"
 seed = 108
 width = 1344
 height = 768
-prompt = "Scientific cross-section illustration of shale formation, fine mud and silt settling in calm deep water, layers compacting under pressure over time, thin fissile laminated sedimentary rock forming with parallel bedding planes, educational geology diagram, warm parchment background, muted gray brown and ochre palette, clean composition"
+prompt = "Scientific cross-section illustration of shale formation, fine mud and silt settling in calm deep water, layers compacting under pressure over time, thin fissile laminated sedimentary rock forming with parallel bedding planes, educational geology diagram, warm parchment background, muted gray brown and ochre palette, clean composition, purely visual, no writing, no numbers, no inscriptions, no characters, no glyphs"
 
 [[inputs.image]]
 name = "siliceous-sinter"
 seed = 109
 width = 1344
 height = 768
-prompt = "Scientific cross-section illustration of siliceous sinter formation at a hot spring, underground heat driving silica-rich water upward through rock, hot water emerging at surface as a geyser terrace, silica precipitating as white porous layered deposits around the spring, educational geology diagram, warm parchment background, muted white ochre and pale blue palette, clean composition"
+prompt = "Scientific cross-section illustration of siliceous sinter formation at a hot spring, underground heat driving silica-rich water upward through rock, hot water emerging at surface as a geyser terrace, silica precipitating as white porous layered deposits around the spring, educational geology diagram, warm parchment background, muted white ochre and pale blue palette, clean composition, purely visual, no writing, no numbers, no inscriptions, no characters, no glyphs"
