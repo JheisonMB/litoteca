@@ -1,0 +1,24 @@
+# Text: normalise to LF so the repo is the same on Windows and Linux.
+* text=auto eol=lf
+
+# Everything geological is a binary blob; never diff or merge an image.
+*.jpg binary
+*.jpeg binary
+*.png binary
+*.webp binary
+*.gif binary
+*.ico binary
+*.zip binary
+*.woff2 binary
+*.ttf binary
+
+# Derived tables stay diffable.
+*.csv text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.py text eol=lf
+*.js text eol=lf
+*.mjs text eol=lf
+*.ts text eol=lf
+*.css text eol=lf
+*.html text eol=lf

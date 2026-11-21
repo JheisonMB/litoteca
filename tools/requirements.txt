@@ -1,0 +1,8 @@
+# Solo para tools/prepare_dataset.py (preparación de datos, no runtime de la app).
+Pillow>=12.0
+numpy>=2.0
+
+# Para tools/evaluar.py (fase 0, métricas del modelo exportado):
+# scikit-learn>=1.5
+# pandas>=2.2
+# matplotlib>=3.8
