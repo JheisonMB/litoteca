@@ -1,0 +1,14 @@
+.git/
+.github/
+data/
+tools/
+scripts/
+*.py
+__pycache__/
+node_modules/
+.env*
+*.local
+BLUEPRINT.md
+DATASETS.md
+README.md
+RELEVO*.md

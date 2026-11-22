@@ -1,0 +1,8 @@
+{
+  "name": "litoteca",
+  "private": true,
+  "scripts": {
+    "dev": "bash scripts/dev.sh",
+    "serve": "python3 -m http.server 8099"
+  }
+}

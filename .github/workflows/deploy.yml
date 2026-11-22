@@ -1,0 +1,43 @@
+name: Deploy
+
+# Despliegue manual a Cloudflare Pages desde la rama trunk (develop).
+# Secrets en entorno `production`: CLOUDFLARE_API_TOKEN (Pages:Edit) y
+# CLOUDFLARE_ACCOUNT_ID. Variables de runtime de la Function en Cloudflare Pages:
+# CUSTOM_VISION_ENDPOINT, CUSTOM_VISION_KEY, CUSTOM_VISION_PROJECT,
+# CUSTOM_VISION_ITERATION (secretos/env vars del proyecto Pages, no del front).
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-${{ github.repository }}
+  cancel-in-progress: false
+
+env:
+  PAGES_PROJECT: ${{ vars.PAGES_PROJECT || 'litoteca' }}
+
+jobs:
+  deploy:
+    name: Deploy to Cloudflare Pages
+    if: github.ref == 'refs/heads/develop'
+    environment: production
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create the Pages project if missing
+        continue-on-error: true
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages project create ${{ env.PAGES_PROJECT }} --production-branch develop
+
+      - name: Publish
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy . --project-name=${{ env.PAGES_PROJECT }} --branch develop
