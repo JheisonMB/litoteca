@@ -28,7 +28,7 @@
 
 * { box-sizing: border-box; }
 
-html, body { height: 100%; }
+html, body { height: 100%; overflow-x: hidden; }
 
 body {
   margin: 0;
@@ -64,6 +64,7 @@ p { hyphens: auto; text-wrap: pretty; }
 
 .app {
   min-height: 100vh;
+  overflow-x: clip;
   display: flex;
   flex-direction: column;
   max-width: 940px;
@@ -88,7 +89,8 @@ p { hyphens: auto; text-wrap: pretty; }
   gap: 9px;
   background: none;
   border: 0;
-  padding: 4px 2px;
+  padding: 10px 2px;
+  min-height: 44px;
   cursor: pointer;
 }
 
@@ -215,6 +217,7 @@ dialog.hoja::backdrop { background: rgba(27, 26, 23, 0.32); }
   width: 100%;
   text-align: left;
   padding: 13px 14px;
+  min-height: 44px;
   border-radius: 12px;
   border: 1px solid var(--linea);
   background: var(--papel);
@@ -280,7 +283,10 @@ dialog.hoja::backdrop { background: rgba(27, 26, 23, 0.32); }
   background: rgba(15, 14, 12, 0.55);
   padding: 5px 11px;
   border-radius: 999px;
-  white-space: nowrap;
+  white-space: normal;
+  max-width: calc(100% - 24px);
+  text-align: center;
+  line-height: 1.35;
 }
 .camara-controles { display: flex; align-items: center; justify-content: center; gap: 18px; }
 
@@ -377,8 +383,15 @@ dialog.hoja::backdrop { background: rgba(27, 26, 23, 0.32); }
   letter-spacing: -0.02em;
   margin: 0 0 2px;
   text-wrap: pretty;
+  overflow-wrap: anywhere;
 }
-.ficha-tecnico { font-family: var(--mono); font-size: 12.5px; color: var(--tinta-3); margin: 0 0 10px; }
+.ficha-tecnico {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--tinta-3);
+  margin: 0 0 10px;
+  overflow-wrap: anywhere;
+}
 
 .chip {
   display: inline-flex;
@@ -603,7 +616,13 @@ dialog.hoja::backdrop { background: rgba(27, 26, 23, 0.32); }
 .entrada-texto { flex: 1; min-width: 0; }
 /* Nombre y meta en renglones aparte: sin display:block se leen pegados
    ("Yeso21 de nov…") porque son spans en línea dentro de .entrada-texto. */
-.entrada-nombre { font-family: var(--serif); font-size: 18px; line-height: 1.2; display: block; }
+.entrada-nombre {
+  font-family: var(--serif);
+  font-size: 18px;
+  line-height: 1.2;
+  display: block;
+  overflow-wrap: anywhere;
+}
 .entrada-meta { display: block; font-size: 12.5px; color: var(--tinta-3); font-family: var(--mono); }
 .entrada-p { font-family: var(--mono); font-size: 13px; color: var(--tinta-2); flex: none; }
 .borrar {
@@ -659,6 +678,7 @@ footer .metodologia { font-family: var(--mono); font-size: 11.5px; }
   .disparador { width: 116px; height: 116px; }
   .disparador svg { width: 54px; height: 54px; }
   .app { padding: 0 16px calc(26px + env(safe-area-inset-bottom)); }
+  .hoja-cuerpo { padding: 18px 16px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -691,7 +711,7 @@ footer .metodologia { font-family: var(--mono); font-size: 11.5px; }
   font-size: 12px;
   padding: 6px 10px;
   border-radius: 999px;
-  min-height: 32px;
+  min-height: 44px;
   cursor: pointer;
 }
 .tira-mock-boton:hover { border-color: var(--tinta-3); color: var(--tinta); }

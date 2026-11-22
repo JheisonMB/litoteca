@@ -126,6 +126,11 @@
     dom.obturador.disabled = true;
     dom.permisoTexto.textContent = motivoPermiso(error);
     anunciar("No hay acceso a la cámara. " + motivoPermiso(error));
+    var titulo = dom.permiso.querySelector("h2");
+    if (titulo) {
+      titulo.setAttribute("tabindex", "-1");
+      titulo.focus({ preventScroll: true });
+    }
   }
 
   function abrirCamara() {
@@ -234,15 +239,15 @@
     return fetch("/api/predict", { method: "POST", body: formulario })
       .then(function (respuesta) {
         if (respuesta.status === 503) return demo(blob);        // modelo sin entrenar
-        if (respuesta.status === 413) throw { mensaje: "La foto es demasiado grande. Intenta de nuevo." };
-        if (respuesta.status === 400) throw { mensaje: "La imagen no se pudo procesar. Prueba con otra foto." };
-        if (!respuesta.ok) throw { mensaje: "No alcanzamos el modelo (" + respuesta.status + ")." };
+        if (respuesta.status === 413) throw { mensaje: "La foto supera 4 MB. Usa una imagen más liviana." };
+        if (respuesta.status === 400) throw { mensaje: "No pudimos leer esa imagen. Prueba con otra foto en JPEG, PNG o WebP." };
+        if (!respuesta.ok) throw { mensaje: "No alcanzamos el modelo. Revisa la conexión e intenta de nuevo." };
         return respuesta.json();
       })
       .catch(function (error) {
         if (error && error.mensaje) throw error;
         if (!navigator.onLine) throw { mensaje: "Sin conexión: la predicción vive en la nube. El historial y las fichas siguen disponibles." };
-        throw { mensaje: "No alcanzamos el modelo. Revisa la conexión y reintenta." };
+        throw { mensaje: "No alcanzamos el modelo. Revisa la conexión e intenta de nuevo." };
       });
   }
 
@@ -465,6 +470,11 @@
 
     montarTiraMock();
     anunciar(ficha.nombre + (typeof respuesta.confianza === "number" ? ". Confianza " + porcentaje(respuesta.confianza) : ""));
+    var nombre = dom.resultado.querySelector(".ficha-nombre");
+    if (nombre) {
+      nombre.setAttribute("tabindex", "-1");
+      nombre.focus({ preventScroll: true });
+    }
   }
 
   /* Tira de desarrollo: solo con ?mock=1, para revisar cada ficha con una foto. */
@@ -516,13 +526,15 @@
     mostrarVista("resultado");
     dom.resultado.innerHTML =
       '<article class="ficha"><div class="ficha-cuerpo">' +
-      '<div class="aviso-permiso"><h2>No pudimos leer la muestra</h2><p>' + esc(mensaje) + "</p>" +
+      '<div class="aviso-permiso"><h2 tabindex="-1">No pudimos leer la muestra</h2><p>' + esc(mensaje) + "</p>" +
       '<div class="acciones-inicio">' +
         (reintentar ? '<button type="button" class="boton principal" id="btn-reintentar">Reintentar</button>' : "") +
         '<button type="button" class="boton" id="btn-subir-error">Subir una foto</button>' +
         '<button type="button" class="boton tenue" id="btn-inicio-error">Volver al inicio</button>' +
       "</div></div></div></article>";
     anunciar(mensaje);
+    var tituloError = dom.resultado.querySelector(".aviso-permiso h2");
+    if (tituloError) tituloError.focus({ preventScroll: true });
 
     var reintentarBtn = $("#btn-reintentar");
     if (reintentarBtn) {
@@ -849,6 +861,7 @@
 
   dom.elegirCamara.addEventListener("click", function () { cerrarSelector(); abrirCamara(); });
   dom.elegirArchivo.addEventListener("click", function () { cerrarSelector(); dom.archivo.click(); });
+  $("#btn-cerrar-selector").addEventListener("click", cerrarSelector);
 
   dom.archivo.addEventListener("change", function (evento) {
     var archivo = evento.target.files && evento.target.files[0];

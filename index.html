@@ -106,7 +106,7 @@
       </div>
 
       <ul class="lista" id="lista-historial"></ul>
-      <p class="vacio" id="historial-vacio">Todavía no has guardado ninguna muestra. Abre la cámara y empieza tu colección.</p>
+      <p class="vacio" id="historial-vacio" role="status">Todavía no has guardado ninguna muestra. Abre la cámara y empieza tu colección.</p>
 
       <div class="acciones-inicio" style="margin-top:20px">
         <button type="button" class="boton" id="btn-volver-inicio">Volver al inicio</button>
@@ -124,10 +124,10 @@
 </div>
 
 <!-- Selector cámara / archivo -->
-<dialog class="hoja" id="selector" aria-labelledby="selector-titulo">
+<dialog class="hoja" id="selector" aria-labelledby="selector-titulo" aria-describedby="selector-desc">
   <div class="hoja-cuerpo">
     <h2 class="hoja-titulo" id="selector-titulo">¿Cómo traes la muestra?</h2>
-    <p class="hoja-texto">La foto se analiza y se descarta: no se guarda en ningún servidor.</p>
+    <p class="hoja-texto" id="selector-desc">La foto se analiza y se descarta: no se guarda en ningún servidor.</p>
     <div class="hoja-opciones">
       <button type="button" class="opcion" id="elegir-camara">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
@@ -147,7 +147,7 @@
     </div>
   </div>
   <div class="hoja-pie">
-    <button type="button" class="enlace" onclick="document.getElementById('selector').close()">Cancelar</button>
+    <button type="button" class="enlace" id="btn-cerrar-selector">Cancelar</button>
   </div>
 </dialog>
 
