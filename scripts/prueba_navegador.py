@@ -54,7 +54,20 @@ PRUEBA = """
   anotar('chip de origen', /Ignea|Sedimentaria/.test((document.querySelector('.chip') || {}).textContent || ''));
   anotar('barra de confianza', /%/.test(((document.querySelector('.barra i') || {}).style || {}).width || ''));
   anotar('banda de demostracion', !!document.querySelector('.banda.demo'));
-  anotar('ilustracion de roca', !!document.querySelector('.ficha-ilustracion img'));
+  anotar('ilustracion de roca', !!document.querySelector('.ficha-portada img'));
+  anotar('zona lamina', !!document.querySelector('.ficha-lamina'));
+  anotar('zona portada', !!document.querySelector('.ficha-portada'));
+  anotar('zona veredicto', !!document.querySelector('.ficha-veredicto'));
+  anotar('zona cuerpo', !!document.querySelector('.ficha-cuerpo'));
+  anotar('zona acciones', !!document.querySelector('.ficha-acciones'));
+  anotar('filete de portada', !!document.querySelector('.filete'));
+  var zonaAcciones = document.querySelector('.ficha-acciones');
+  anotar('guardar primero', !!zonaAcciones && zonaAcciones.firstElementChild && zonaAcciones.firstElementChild.id === 'btn-guardar');
+  var valorConfianza = document.querySelector('.confianza-valor');
+  anotar('tabular-nums', !!valorConfianza && getComputedStyle(valorConfianza).fontVariantNumeric.indexOf('tabular-nums') !== -1,
+    valorConfianza ? getComputedStyle(valorConfianza).fontVariantNumeric : 'sin valor');
+  anotar('sin overflow horizontal', document.documentElement.scrollWidth <= window.innerWidth,
+    'scrollWidth=' + document.documentElement.scrollWidth + ' innerWidth=' + window.innerWidth);
   const lamina = document.querySelector('.proceso img');
   anotar('lamina de proceso', !!lamina && (lamina.getAttribute('src') || '').includes('/procesos/'), (lamina || {}).src || 'sin lamina');
   anotar('bloque de gemela', !!document.querySelector('[data-ir-a]'));
@@ -63,6 +76,7 @@ PRUEBA = """
 
   const guardar = document.getElementById('btn-guardar');
   anotar('boton guardar', !!guardar);
+  anotar('guardar tactil 44px', !!guardar && guardar.offsetHeight >= 44, guardar ? 'alto=' + guardar.offsetHeight : 'sin boton');
   if (guardar) guardar.click();
   await new Promise((r) => setTimeout(r, 600));
 
@@ -147,6 +161,7 @@ def main():
         proceso = subprocess.run(
             [
                 chrome, "--headless=new", "--disable-gpu", "--no-sandbox",
+                "--window-size=360,900",
                 "--user-data-dir=" + perfil, "--virtual-time-budget=15000",
                 "--dump-dom", f"http://127.0.0.1:{puerto}/__prueba.html",
             ],

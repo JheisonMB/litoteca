@@ -214,11 +214,12 @@
     estado.ultimoBlob = blob;
     mostrarVista("resultado");
     dom.resultado.innerHTML =
+      '<article class="ficha" aria-busy="true"><div class="ficha-cuerpo">' +
       '<div class="esqueleto" role="status">' +
       '<div class="linea ancha"></div><div class="linea media"></div>' +
       "<div class=\"linea\"></div><div class=\"linea\"></div>" +
       '<p style="margin:6px 0 0;color:var(--tinta-3);font-size:13px">Mirando la textura…</p>' +
-      "</div>";
+      "</div></div></article>";
     anunciar("Analizando la muestra.");
 
     predecir(blob)
@@ -340,8 +341,11 @@
         esc(gemela.nombre).toLowerCase() + " →</button></div>"
       : "";
 
-    var ilustracion = ficha.ilustracion
-      ? '<figure class="ficha-ilustracion"><img src="' + esc(ficha.ilustracion) + '" alt="" loading="lazy" decoding="async"></figure>'
+    var portadaImg = ficha.ilustracion
+      ? '<img src="' + esc(ficha.ilustracion) + '" alt="Ilustración de ' + esc(ficha.nombre) + '" loading="lazy" decoding="async">'
+      : (foto ? '<img src="' + foto + '" alt="Muestra fotografiada">' : "");
+    var miniaturaPortada = (ficha.ilustracion && foto)
+      ? '<img class="ficha-miniatura" src="' + foto + '" alt="Muestra fotografiada">'
       : "";
 
     var fuente = ficha.wiki
@@ -351,30 +355,34 @@
 
     var acciones = conAcciones
       ? '<div class="ficha-acciones">' +
-          '<button type="button" class="boton" id="btn-otra">Escanear otra</button>' +
           '<button type="button" class="boton principal" id="btn-guardar">Guardar en mi litoteca</button>' +
+          '<button type="button" class="boton" id="btn-otra">Escanear otra</button>' +
           '<button type="button" class="boton tenue" id="btn-compartir">Compartir</button>' +
         "</div>"
       : "";
 
     return (
       '<article class="ficha">' +
-        '<header class="ficha-cabeza">' +
-          (foto ? '<img class="ficha-foto" src="' + foto + '" alt="Muestra fotografiada">' : "") +
-          '<div class="ficha-titulos">' +
+        '<div class="ficha-lamina">' +
+          '<figure class="ficha-portada">' +
+            portadaImg +
+            '<figcaption class="ficha-portada-pie">' +
+              '<span class="chip ' + esc(origen) + '">' + esc(ORIGEN_TEXTO[origen] || origen) + "</span>" +
+              miniaturaPortada +
+            "</figcaption>" +
+          "</figure>" +
+          '<div class="ficha-veredicto">' +
             '<h2 class="ficha-nombre">' + esc(ficha.nombre) + "</h2>" +
             '<p class="ficha-tecnico">' + esc(ficha.tecnico) + "</p>" +
-            '<span class="chip ' + esc(origen) + '">' + esc(ORIGEN_TEXTO[origen] || origen) + "</span>" +
+            '<div class="confianza">' +
+              '<div class="confianza-fila"><span>Confianza · top-1</span><span class="confianza-valor">' +
+                (typeof respuesta.confianza === "number" ? porcentaje(respuesta.confianza) : "Desconocida") + "</span></div>" +
+              '<div class="barra" role="img" aria-label="Confianza ' +
+                (typeof respuesta.confianza === "number" ? porcentaje(respuesta.confianza) : "desconocida") + '">' +
+                '<i style="width:' + Math.max(2, Math.round((respuesta.confianza || 0) * 100)) + '%"></i></div>' +
+              (top3 ? '<details class="top3"><summary>Tres primeras lecturas</summary><ol>' + top3 + "</ol></details>" : "") +
+            "</div>" +
           "</div>" +
-        "</header>" +
-        ilustracion +
-        '<div class="confianza">' +
-          '<div class="confianza-fila"><span>Confianza · top-1</span><span class="confianza-valor">' +
-            (typeof respuesta.confianza === "number" ? porcentaje(respuesta.confianza) : "Desconocida") + "</span></div>" +
-          '<div class="barra" role="img" aria-label="Confianza ' +
-            (typeof respuesta.confianza === "number" ? porcentaje(respuesta.confianza) : "desconocida") + '">' +
-            '<i style="width:' + Math.max(2, Math.round((respuesta.confianza || 0) * 100)) + '%"></i></div>' +
-          (top3 ? '<details class="top3"><summary>Tres primeras lecturas</summary><ol>' + top3 + "</ol></details>" : "") +
         "</div>" +
         '<div class="ficha-cuerpo">' +
           seccion("Qué es", ficha.que) +
@@ -501,12 +509,13 @@
   function mostrarError(mensaje, reintentar) {
     mostrarVista("resultado");
     dom.resultado.innerHTML =
+      '<article class="ficha"><div class="ficha-cuerpo">' +
       '<div class="aviso-permiso"><h2>No pudimos leer la muestra</h2><p>' + esc(mensaje) + "</p>" +
       '<div class="acciones-inicio">' +
         (reintentar ? '<button type="button" class="boton principal" id="btn-reintentar">Reintentar</button>' : "") +
         '<button type="button" class="boton" id="btn-subir-error">Subir una foto</button>' +
         '<button type="button" class="boton tenue" id="btn-inicio-error">Volver al inicio</button>' +
-      "</div></div>";
+      "</div></div></div></article>";
     anunciar(mensaje);
 
     var reintentarBtn = $("#btn-reintentar");

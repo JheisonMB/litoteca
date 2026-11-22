@@ -210,6 +210,15 @@ if errores:
 print("  ok  sin sombras, sin degradados de UI, tokens y motion respetados")
 PY
 
+echo "== 6b/8 presupuesto de CSS"
+limite_css=$((24 * 1024))
+css_bytes=$(wc -c < assets/app.css)
+if [ "$css_bytes" -gt "$limite_css" ]; then
+  fallo "app.css suma $css_bytes bytes; el presupuesto es $limite_css"
+else
+  ok "$((css_bytes / 1024)) KB de CSS (presupuesto 24 KB)"
+fi
+
 echo "== 7/8 presupuesto de JavaScript"
 limite=$((150 * 1024))
 total=$(du -cb assets/*.js functions/api/*.js | tail -1 | cut -f1)

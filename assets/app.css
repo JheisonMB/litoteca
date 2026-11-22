@@ -6,11 +6,16 @@
   --papel-3: #fffdf8;
   --tinta: #1b1a17;
   --tinta-2: #57534b;
-  --tinta-3: #8b857a;
-  --linea: #e2dbcd;
-  --igneo: #c2410c;
+  /* Tinta terciaria: texto meta (12–13 px) que debe llegar a 4,5:1 sobre
+     papel, papel-2 y papel-3. El azul grisáceo del blueprint (3,34:1) no llega. */
+  --tinta-3: #6b665d;
+  /* Filete: reglas y bordes de control con >=3:1 sobre los tres papeles. */
+  --linea: #8b857a;
+  /* Acentos un punto más profundos para que el chip (12 px) cumpla 4,5:1
+     sobre su relleno suave; mismo matiz, misma identidad de origen. */
+  --igneo: #b03a08;
   --igneo-suave: #fbe6da;
-  --sedimentario: #a16207;
+  --sedimentario: #8f5606;
   --sedimentario-suave: #f7ecd2;
   --alerta: #b45309;
   --alerta-suave: #fbeed3;
@@ -42,6 +47,13 @@ body {
 
 button, input { font: inherit; color: inherit; }
 
+p { hyphens: auto; text-wrap: pretty; }
+
+.confianza-valor,
+.top3 li span:last-child,
+.entrada-meta,
+.entrada-p { font-variant-numeric: tabular-nums; }
+
 :focus-visible {
   outline: 2px solid var(--tinta);
   outline-offset: 3px;
@@ -56,7 +68,7 @@ button, input { font: inherit; color: inherit; }
   flex-direction: column;
   max-width: 940px;
   margin: 0 auto;
-  padding: 0 20px 32px;
+  padding: 0 20px calc(26px + env(safe-area-inset-bottom));
 }
 
 .topbar {
@@ -86,6 +98,9 @@ button, input { font: inherit; color: inherit; }
   background: none;
   border: 0;
   padding: 8px 2px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
   color: var(--tinta-2);
   font-size: 14px;
   cursor: pointer;
@@ -124,6 +139,12 @@ h1 {
   color: var(--tinta-2);
   font-size: 17px;
   margin: -12px 0 0;
+}
+
+.filete {
+  width: 56px;
+  border-top: 1px solid var(--tinta-3);
+  margin: 0 auto;
 }
 
 /* El icono central: un diafragma. Al pulsarlo se elige cámara o archivo. */
@@ -313,47 +334,51 @@ dialog.hoja::backdrop { background: rgba(27, 26, 23, 0.32); }
   border: 1px solid var(--linea);
   border-radius: var(--radio);
   overflow: hidden;
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
 }
 
-.ficha-cabeza {
-  display: flex;
-  gap: 16px;
-  align-items: flex-start;
-  padding: 18px 20px 16px;
+.ficha-lamina { display: grid; }
+.ficha-portada {
+  margin: 0;
+  background: var(--papel);
   border-bottom: 1px solid var(--linea);
 }
-.ficha-foto {
-  width: 92px;
-  height: 92px;
+.ficha-portada > img {
+  width: 100%;
+  max-height: 340px;
+  object-fit: contain;
+  display: block;
+  padding: 22px 20px 6px;
+}
+.ficha-portada-pie {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 20px 14px;
+}
+.ficha-miniatura {
+  width: 64px;
+  height: 64px;
   border-radius: 12px;
   object-fit: cover;
   background: var(--papel-2);
   border: 1px solid var(--linea);
   flex: none;
 }
-.ficha-ilustracion {
-  margin: 0;
-  background: var(--papel);
-  border-bottom: 1px solid var(--linea);
-  padding: 22px 20px 18px;
-  display: grid;
-  place-items: center;
-}
-.ficha-ilustracion img {
-  width: min(260px, 62vw);
-  height: auto;
-  display: block;
-}
-.ficha-titulos { flex: 1; min-width: 0; }
+.ficha-veredicto { padding: 18px 20px 16px; }
 .ficha-nombre {
   font-family: var(--serif);
   font-weight: 400;
-  font-size: clamp(26px, 5vw, 34px);
-  line-height: 1.1;
+  font-size: clamp(30px, 7vw, 40px);
+  line-height: 1.05;
   letter-spacing: -0.02em;
   margin: 0 0 2px;
+  text-wrap: pretty;
 }
-.ficha-tecnico { font-family: var(--mono); font-size: 12.5px; color: var(--tinta-3); margin: 0 0 8px; }
+.ficha-tecnico { font-family: var(--mono); font-size: 12.5px; color: var(--tinta-3); margin: 0 0 10px; }
 
 .chip {
   display: inline-flex;
@@ -368,7 +393,7 @@ dialog.hoja::backdrop { background: rgba(27, 26, 23, 0.32); }
 .chip.igneo { color: var(--igneo); background: var(--igneo-suave); }
 .chip.sedimentario { color: var(--sedimentario); background: var(--sedimentario-suave); }
 
-.confianza { padding: 14px 20px 16px; border-bottom: 1px solid var(--linea); }
+.confianza { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--linea); }
 .confianza-fila {
   display: flex;
   align-items: baseline;
@@ -391,6 +416,7 @@ dialog.hoja::backdrop { background: rgba(27, 26, 23, 0.32); }
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  min-height: 44px;
 }
 .top3 summary::marker { content: ""; }
 .top3 summary::before { content: "+"; font-family: var(--mono); }
@@ -407,6 +433,12 @@ dialog.hoja::backdrop { background: rgba(27, 26, 23, 0.32); }
 .top3 li span:last-child { font-family: var(--mono); font-size: 12.5px; color: var(--tinta-3); }
 
 .ficha-cuerpo { padding: 4px 20px 20px; }
+.ficha-cuerpo > .seccion {
+  border-top: 1px dotted var(--linea);
+  margin-top: 12px;
+  padding-top: 12px;
+}
+.ficha-cuerpo > .seccion:first-child { border-top: 0; margin-top: 0; padding-top: 10px; }
 .seccion { padding: 14px 0 0; }
 .seccion h3 {
   font-size: 11px;
@@ -448,6 +480,7 @@ dialog.hoja::backdrop { background: rgba(27, 26, 23, 0.32); }
   background: none;
   border: 0;
   padding: 0;
+  min-height: 44px;
   color: var(--tinta);
   font-size: 13.5px;
   border-bottom: 1px solid var(--tinta-3);
@@ -464,12 +497,28 @@ dialog.hoja::backdrop { background: rgba(27, 26, 23, 0.32); }
 .fuente a { color: var(--tinta-2); }
 
 .ficha-acciones {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr;
   gap: 8px;
-  flex-wrap: wrap;
   padding: 14px 20px 18px;
   border-top: 1px solid var(--linea);
   background: var(--papel);
+}
+.ficha-acciones .boton { width: 100%; justify-content: center; min-height: 44px; }
+@media (min-width: 640px) {
+  .ficha-acciones { grid-template-columns: 1fr 1fr; }
+  .ficha-acciones #btn-guardar { grid-column: 1 / -1; }
+}
+@media (min-width: 860px) {
+  .ficha-lamina { grid-template-columns: 1.05fr 1fr; }
+  .ficha-portada {
+    border-bottom: 0;
+    border-right: 1px solid var(--linea);
+    display: flex;
+    flex-direction: column;
+  }
+  .ficha-portada > img { flex: 1; }
+  .ficha-veredicto { align-self: center; }
 }
 
 /* esqueleto mientras se predice */
@@ -511,12 +560,18 @@ dialog.hoja::backdrop { background: rgba(27, 26, 23, 0.32); }
 .historial-sub { font-size: 13px; color: var(--tinta-3); margin: 2px 0 0; }
 
 .lista { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--linea); }
-.lista li { border-bottom: 1px solid var(--linea); }
+/* Fila única: miniatura + texto + confianza + borrar en un mismo renglón. */
+.lista li {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--linea);
+}
 .entrada {
   display: flex;
   align-items: center;
   gap: 13px;
-  width: 100%;
+  flex: 1 1 auto;
+  min-width: 0;
   padding: 11px 4px;
   background: none;
   border: 0;
@@ -546,14 +601,18 @@ dialog.hoja::backdrop { background: rgba(27, 26, 23, 0.32); }
   background: var(--papel-2);
 }
 .entrada-texto { flex: 1; min-width: 0; }
-.entrada-nombre { font-family: var(--serif); font-size: 18px; line-height: 1.2; }
-.entrada-meta { font-size: 12.5px; color: var(--tinta-3); font-family: var(--mono); }
+/* Nombre y meta en renglones aparte: sin display:block se leen pegados
+   ("Yeso21 de nov…") porque son spans en línea dentro de .entrada-texto. */
+.entrada-nombre { font-family: var(--serif); font-size: 18px; line-height: 1.2; display: block; }
+.entrada-meta { display: block; font-size: 12.5px; color: var(--tinta-3); font-family: var(--mono); }
 .entrada-p { font-family: var(--mono); font-size: 13px; color: var(--tinta-2); flex: none; }
 .borrar {
   border: 0;
   background: none;
   color: var(--tinta-3);
   padding: 8px;
+  min-height: 44px;
+  min-width: 44px;
   cursor: pointer;
   font-size: 15px;
   line-height: 1;
@@ -599,8 +658,7 @@ footer .metodologia { font-family: var(--mono); font-size: 11.5px; }
   .inicio { min-height: calc(100vh - 170px); gap: 22px; }
   .disparador { width: 116px; height: 116px; }
   .disparador svg { width: 54px; height: 54px; }
-  .ficha-foto { width: 74px; height: 74px; }
-  .app { padding: 0 16px 26px; }
+  .app { padding: 0 16px calc(26px + env(safe-area-inset-bottom)); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -644,3 +702,10 @@ footer .metodologia { font-family: var(--mono); font-size: 11.5px; }
 }
 
 .galeria-item { margin: 0 0 16px; }
+
+/* ---------- impresión / compartir ---------- */
+
+@media print {
+  .topbar, footer, .ficha-acciones, .tira-mock, .sincronia { display: none !important; }
+  .ficha { max-width: none; }
+}
