@@ -1,7 +1,7 @@
 /* Litoteca service worker.
  * VERSION bump: si cambias cualquier archivo de PRECACHE, cambia VERSION también.
  * En activate se borran todos los cachés cuyo nombre no sea la VERSION actual. */
-const VERSION = "litoteca-v1";
+const VERSION = "litoteca-v2";
 const PRECACHE = [
   "/",
   "/index.html",
