@@ -133,6 +133,30 @@ if (errores.length) { console.error(errores.join("\n")); process.exit(1); }
 console.log(`  ok  ${esperadas.length} fichas completas y mock alineado`);
 JS
 
+echo "== 3b/8 extractos de Wikipedia cacheados"
+node - <<'JS' || fallos=$((fallos + 1))
+const fs = require("fs");
+const vm = require("vm");
+const caja = { window: {} };
+vm.createContext(caja);
+vm.runInContext(fs.readFileSync("assets/wiki.js", "utf-8"), caja, { filename: "wiki.js" });
+const wiki = caja.window.LITOTECA_WIKI;
+const esperadas = ["basalt", "chert", "clay", "conglomerate", "diatomite",
+                   "gypsum", "olivine-basalt", "shale", "siliceous-sinter"];
+const errores = [];
+if (!wiki || typeof wiki !== "object") { console.error("falta window.LITOTECA_WIKI"); process.exit(1); }
+for (const id of esperadas) {
+  const e = wiki[id];
+  if (!e) { errores.push(`falta la entrada ${id}`); continue; }
+  if (!e.extracto || !String(e.extracto).trim()) errores.push(`${id}: extracto vacío`);
+  if (!e.url || !String(e.url).trim()) errores.push(`${id}: url vacía`);
+}
+const sobrantes = Object.keys(wiki).filter((k) => k !== "generado" && k !== "fuente" && !esperadas.includes(k));
+if (sobrantes.length) errores.push("entradas de más: " + sobrantes.join(", "));
+if (errores.length) { console.error(errores.join("\n")); process.exit(1); }
+console.log(`  ok  ${esperadas.length} extractos con extracto y url`);
+JS
+
 echo "== 4/8 recursos y contrato"
 for recurso in $(grep -o 'href="/[^"]*"\|src="/[^"]*"' index.html | sed 's/.*="\///; s/"$//' | sort -u); do
   [ -f "$recurso" ] && ok "$recurso" || fallo "index.html referencia $recurso y no existe"

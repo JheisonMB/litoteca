@@ -348,10 +348,16 @@
       ? '<img class="ficha-miniatura" src="' + foto + '" alt="Muestra fotografiada">'
       : "";
 
-    var fuente = ficha.wiki
-      ? '<p class="fuente">Fuente de la ficha: curada para Litoteca. Amplía en <a href="https://es.wikipedia.org/wiki/' +
-        encodeURIComponent(ficha.wiki.replace(/ /g, "_")) + '" target="_blank" rel="noopener">Wikipedia (CC BY-SA 4.0)</a>.</p>'
-      : "";
+    var wiki = (window.LITOTECA_WIKI || {})[ficha.id];
+    var fuente;
+    if (wiki && wiki.extracto) {
+      fuente = '<p class="fuente">Fuente de la ficha: curada para Litoteca.</p>' +
+        '<p class="fuente">' + esc(wiki.extracto) + "</p>" +
+        '<p class="fuente">Fuente: <a href="' + esc(wiki.url) +
+        '" target="_blank" rel="noopener">Wikipedia (CC BY-SA 4.0)</a></p>';
+    } else {
+      fuente = '<p class="fuente">Fuente de la ficha: curada para Litoteca.</p>';
+    }
 
     var acciones = conAcciones
       ? '<div class="ficha-acciones">' +
