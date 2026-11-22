@@ -6,7 +6,9 @@
 El desarrollo siguió un flujo iterativo: definición del contexto y clases,
 preparación del dataset, construcción de la aplicación web, integración del proxy
 de predicción, entrenamiento del modelo en Custom Vision y validación del producto.
-El siguiente diagrama resume el flujo de interacción en la aplicación.
+Antes de clasificar la roca, la API aplica un detector binario roca/no-roca para
+rechazar imágenes fuera de dominio. El siguiente diagrama resume el flujo de
+interacción en la aplicación.
 
 \begin{mermaid}[style=editorial, width=0.95\linewidth, pos=H, caption={Flujo general de predicción en Litoteca}]
   sequenceDiagram
@@ -22,18 +24,29 @@ El siguiente diagrama resume el flujo de interacción en la aplicación.
     W->>W: Preprocesa y valida imagen
     W->>F: POST /api/predict
     activate F
-    F->>CV: Solicita clasificación
+    F->>CV: Solicita detección roca/no-roca
     activate CV
-    CV-->>F: Predicciones por clase
+    CV-->>F: Probabilidades rock / not_rock
     deactivate CV
-    F-->>W: JSON normalizado (top, confianza, margen)
-    deactivate F
-    W->>WK: Consulta extracto cacheado
-    activate WK
-    WK-->>W: Extracto y fuente CC BY-SA
-    deactivate WK
-    W-->>U: Muestra ficha, confianza, gemelas y contexto
-    deactivate W
+    alt No es roca o rock < 0.5
+      F-->>W: 422 no_es_roca
+      deactivate F
+      W-->>U: Muestra mensaje: no se identificó roca
+      deactivate W
+    else Es roca
+      F->>CV: Solicita clasificación por clase
+      activate CV
+      CV-->>F: Predicciones por clase
+      deactivate CV
+      F-->>W: JSON normalizado (top, confianza, margen)
+      deactivate F
+      W->>WK: Consulta extracto cacheado
+      activate WK
+      WK-->>W: Extracto y fuente CC BY-SA
+      deactivate WK
+      W-->>U: Muestra ficha, confianza, gemelas y contexto
+      deactivate W
+    end
 \end{mermaid}
 
 \section{Selección y preparación del dataset}
@@ -138,6 +151,8 @@ entrenamiento; por eso se prefirió subir imágenes limpias.
 
 \section{Entrenamiento del modelo}
 
+\subsection{Clasificador multiclase}
+
 El entrenamiento se realiza en Azure Custom Vision. Se creó un proyecto multiclase
 de Litoteca y se cargaron las imágenes por etiqueta. Se probaron dos enfoques:
 
@@ -152,8 +167,26 @@ de Litoteca y se cargaron las imágenes por etiqueta. Se probaron dos enfoques:
         se puede usar como base para la demo mientras se prueba una iteración mejorada.
 \end{itemize}
 
+\subsection{Detector roca/no-roca}
+
+Para reducir falsos positivos ante imágenes fuera de dominio, se entrenó un modelo
+binario separado en Custom Vision con dos etiquetas: \texttt{rock} y
+\texttt{not\_rock}. El dataset de detección (\texttt{data/rock-detector}) contiene
+150 imágenes de roca y 150 imágenes no-roca. La iteración
+\texttt{2d92f618-115e-4a73-a9ed-006002782c7c} del proyecto
+\texttt{2dc1aedb-f66c-4fb1-abc5-54c253440052} se publicó como
+\texttt{litoteca-detector-v1} en el recurso de predicción
+\texttt{labunisalle-Prediction}.
+
+La Function \texttt{functions/api/predict.js} consulta primero el detector. Si la
+etiqueta superior es \texttt{not\_rock} o la probabilidad de \texttt{rock} es menor
+que 0.5, la API responde con HTTP 422 y código \texttt{no\_es\_roca}; solo cuando la
+imagen pasa este guardrail se invoca el clasificador multiclase.
+
 Las credenciales y endpoints de predicción se manejan como variables de entorno en
-Cloudflare Pages, no en el frontend.
+Cloudflare Pages, no en el frontend. Para el detector se agregaron
+\texttt{CUSTOM\_VISION\_DETECTOR\_PROJECT} y
+\texttt{CUSTOM\_VISION\_DETECTOR\_ITERATION}.
 
 \section{Desarrollo de la aplicación}
 
@@ -161,8 +194,9 @@ Cloudflare Pages, no en el frontend.
 
 La aplicación es un sitio estático sin build: HTML, CSS y JavaScript vanilla. La
 predicción se consume mediante una Cloudflare Pages Function en
-\texttt{functions/api/predict.js}, que recibe la imagen, la envía a Custom Vision y
-normaliza la respuesta al contrato de Litoteca.
+\texttt{functions/api/predict.js}, que valida la imagen, ejecuta primero el detector
+roca/no-roca y, solo si la imagen pasa el guardrail, envía la solicitud al clasificador
+multiclase de Custom Vision. La respuesta se normaliza al contrato de Litoteca.
 
 \begin{table}[H]
   \centering
@@ -176,7 +210,7 @@ normaliza la respuesta al contrato de Litoteca.
     \texttt{assets/app.js} & Lógica de UI, cámara, subida, mock, historial local. \\
     \texttt{assets/app.css} & Sistema visual editorial/papel. \\
     \texttt{assets/fichas.js} & Fichas curadas de las 9 clases. \\
-    \texttt{functions/api/predict.js} & Proxy a Custom Vision, validación y contrato. \\
+    \texttt{functions/api/predict.js} & Proxy a Custom Vision, guardrail roca/no-roca, validación y contrato. \\
     \texttt{sw.js} & Service worker para modo sin conexión honesto. \\
     \texttt{scripts/gates.sh} & Gates deterministas y pruebas de navegador. \\
     \bottomrule
@@ -218,7 +252,8 @@ por el modelo de imagen.
 La aplicación se despliega en Cloudflare Pages. El flujo de despliegue usa GitHub
 Actions con \texttt{workflow\_dispatch} desde la rama \texttt{develop}, entorno
 \texttt{production}, y \texttt{wrangler pages deploy}. Los secretos de Cloudflare se
-configuran en GitHub Environment secrets; los secretos de Custom Vision se
-configuran en Cloudflare Pages como variables de runtime de la Function.
+configuran en GitHub Environment secrets; los secretos de Custom Vision, incluidos
+los del detector roca/no-roca, se configuran en Cloudflare Pages como variables de
+runtime de la Function.
 
 La versión actual está disponible en \url{https://litoteca.pages.dev/}.
