@@ -99,21 +99,59 @@ export async function onRequestPost({ request, env }) {
     }, 503);
   }
 
-  const url =
-    endpoint.replace(/\/+$/, "") +
-    `/customvision/v3.0/Prediction/${encodeURIComponent(proyecto)}` +
-    `/classify/iterations/${encodeURIComponent(iteracion)}/image`;
+  const bytes = await imagen.arrayBuffer();
+  const base = endpoint.replace(/\/+$/, "");
 
-  let respuesta;
-  try {
-    respuesta = await fetch(url, {
+  async function clasificar(proj, iter) {
+    const url =
+      base +
+      `/customvision/v3.0/Prediction/${encodeURIComponent(proj)}` +
+      `/classify/iterations/${encodeURIComponent(iter)}/image`;
+    const r = await fetch(url, {
       method: "POST",
       headers: {
         "Prediction-Key": clave,
         "Content-Type": "application/octet-stream"
       },
-      body: await imagen.arrayBuffer()
+      body: bytes
     });
+    return r;
+  }
+
+  const detectorProyecto = env.CUSTOM_VISION_DETECTOR_PROJECT;
+  const detectorIteracion = env.CUSTOM_VISION_DETECTOR_ITERATION;
+  if (detectorProyecto && detectorIteracion) {
+    let detRespuesta;
+    try {
+      detRespuesta = await clasificar(detectorProyecto, detectorIteracion);
+    } catch (e) {
+      return json({ error: "modelo_inalcanzable", mensaje: "No alcanzamos Custom Vision." }, 503);
+    }
+    if (detRespuesta.status === 429) {
+      return json({ error: "limite_uso", mensaje: "El modelo está al límite de uso. Reintenta en un minuto." }, 429);
+    }
+    if (!detRespuesta.ok) {
+      const detalle = await detRespuesta.text().catch(() => "");
+      return json({ error: "modelo_error", mensaje: "Custom Vision respondió " + detRespuesta.status + ".", detalle: detalle.slice(0, 300) }, 503);
+    }
+    const detCuerpo = await detRespuesta.json().catch(() => null);
+    const detPreds = detCuerpo && Array.isArray(detCuerpo.predictions) ? detCuerpo.predictions : [];
+    const detTop = detPreds.slice().sort((a, b) => (b.probability || 0) - (a.probability || 0))[0];
+    const detTag = String((detTop && detTop.tagName) || "").toLowerCase();
+    const detP = Number((detTop && detTop.probability) || 0);
+    const rockP = Number((detPreds.find((p) => String(p.tagName).toLowerCase() === "rock") || {}).probability || 0);
+    if (detTag === "not_rock" || rockP < 0.5) {
+      return json({
+        error: "no_es_roca",
+        mensaje: "No identificamos una roca en la imagen. Prueba con una foto clara de una roca, con buena luz y fondo simple.",
+        detector: { top: detTag, confianza: Number(detP.toFixed(4)), rock: Number(rockP.toFixed(4)) }
+      }, 422);
+    }
+  }
+
+  let respuesta;
+  try {
+    respuesta = await clasificar(proyecto, iteracion);
   } catch (e) {
     return json({ error: "modelo_inalcanzable", mensaje: "No alcanzamos Custom Vision." }, 503);
   }

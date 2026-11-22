@@ -1,0 +1,69 @@
+capability = "comfy.still"
+
+[inputs]
+workflow = "flux2-klein-4b"
+
+# Ilustraciones de espécimen de roca para fichas Litoteca. Generadas con facet+Comfy.
+
+[[inputs.image]]
+name = "basalt"
+seed = 100
+width = 1024
+height = 1024
+prompt = "Scientific illustration of a basalt rock specimen, dark fine-grained volcanic igneous rock, matte black to dark gray, small vesicles possible, clean specimen on neutral warm parchment background, editorial geology field guide style, accurate texture"
+
+[[inputs.image]]
+name = "olivine-basalt"
+seed = 101
+width = 1024
+height = 1024
+prompt = "Scientific illustration of an olivine basalt rock specimen, dark volcanic rock with visible green olivine phenocrysts embedded in fine-grained matrix, clean specimen on neutral warm parchment background, editorial geology field guide style, accurate texture"
+
+[[inputs.image]]
+name = "chert"
+seed = 102
+width = 1024
+height = 1024
+prompt = "Scientific illustration of a chert rock specimen, hard dense sedimentary rock with conchoidal fracture, waxy luster, gray to tan color, clean specimen on neutral warm parchment background, editorial geology field guide style, accurate texture"
+
+[[inputs.image]]
+name = "clay"
+seed = 103
+width = 1024
+height = 1024
+prompt = "Scientific illustration of a clay sediment sample/rock specimen, fine-grained earthy sedimentary material, soft matte texture, brown-tan color, clean specimen on neutral warm parchment background, editorial geology field guide style, accurate texture"
+
+[[inputs.image]]
+name = "conglomerate"
+seed = 104
+width = 1024
+height = 1024
+prompt = "Scientific illustration of a conglomerate rock specimen, rounded pebbles and clasts cemented in a matrix, clearly visible coarse rounded fragments, clean specimen on neutral warm parchment background, editorial geology field guide style, accurate texture"
+
+[[inputs.image]]
+name = "diatomite"
+seed = 105
+width = 1024
+height = 1024
+prompt = "Scientific illustration of a diatomite rock specimen, light white to pale cream porous lightweight sedimentary rock, chalky matte texture, clean specimen on neutral warm parchment background, editorial geology field guide style, accurate texture"
+
+[[inputs.image]]
+name = "gypsum"
+seed = 106
+width = 1024
+height = 1024
+prompt = "Scientific illustration of a gypsum rock specimen, soft translucent to white mineral, fibrous or crystalline habit, clean specimen on neutral warm parchment background, editorial geology field guide style, accurate texture"
+
+[[inputs.image]]
+name = "shale"
+seed = 107
+width = 1024
+height = 1024
+prompt = "Scientific illustration of a shale rock specimen, fine-grained laminated sedimentary rock with thin fissile layers, gray-brown color, clean specimen on neutral warm parchment background, editorial geology field guide style, accurate texture"
+
+[[inputs.image]]
+name = "siliceous-sinter"
+seed = 108
+width = 1024
+height = 1024
+prompt = "Scientific illustration of a siliceous sinter (geyserite) rock specimen, white to pale gray porous siliceous deposit, layered botryoidal texture, clean specimen on neutral warm parchment background, editorial geology field guide style, accurate texture"

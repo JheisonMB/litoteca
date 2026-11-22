@@ -240,8 +240,13 @@
       .then(function (respuesta) {
         if (respuesta.status === 503) return demo(blob);        // modelo sin entrenar
         if (respuesta.status === 413) throw { mensaje: "La foto supera 4 MB. Usa una imagen más liviana." };
-        if (respuesta.status === 400) throw { mensaje: "No pudimos leer esa imagen. Prueba con otra foto en JPEG, PNG o WebP." };
-        if (!respuesta.ok) throw { mensaje: "No alcanzamos el modelo. Revisa la conexión e intenta de nuevo." };
+        if (!respuesta.ok) {
+          return respuesta.json().catch(function () { return {}; }).then(function (cuerpo) {
+            if (cuerpo && cuerpo.mensaje) throw { mensaje: cuerpo.mensaje, error: cuerpo.error };
+            if (respuesta.status === 400) throw { mensaje: "No pudimos leer esa imagen. Prueba con otra foto en JPEG, PNG o WebP." };
+            throw { mensaje: "No alcanzamos el modelo. Revisa la conexión e intenta de nuevo." };
+          });
+        }
         return respuesta.json();
       })
       .catch(function (error) {
@@ -856,7 +861,7 @@
   /* ---------------- eventos ---------------- */
 
   dom.disparador.addEventListener("click", abrirSelector);
-  dom.btnCamara.addEventListener("click", abrirSelector);
+  dom.btnCamara.addEventListener("click", function () { abrirCamara(); });
   dom.btnSubir.addEventListener("click", function () { dom.archivo.click(); });
 
   dom.elegirCamara.addEventListener("click", function () { cerrarSelector(); abrirCamara(); });

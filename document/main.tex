@@ -1,0 +1,130 @@
+% Informe de entrega - Litoteca.
+% Compilado con texforge (tectonic/XeTeX), fuente UTF-8.
+\documentclass[a4paper,12pt]{report}
+
+\usepackage[spanish]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[lining]{ebgaramond}
+\usepackage{ebgaramond-maths}
+\usepackage{microtype}
+\usepackage[skip=0.55\baselineskip]{parskip}
+\usepackage[a4paper,margin=2.5cm,headheight=14pt,headsep=12pt]{geometry}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{array}
+\usepackage{longtable}
+
+\definecolor{reportink}{HTML}{1D1510}
+\definecolor{reportaccent}{HTML}{87222C}
+\definecolor{reportmark}{HTML}{87222C}
+\newcommand{\lblAuthor}{Autor}
+\newcommand{\lblCourse}{Asignatura}
+\addto\captionsspanish{\renewcommand{\lblAuthor}{Autor}\renewcommand{\lblCourse}{Asignatura}}
+
+\titleformat{\chapter}[display]
+{\normalfont\huge\bfseries\color{reportink}}
+{\color{reportaccent}\chaptertitlename\ \thechapter}{14pt}{\Huge}
+\titlespacing*{\chapter}{0pt}{-12pt}{18pt}
+\titleformat{\section}{\normalfont\Large\bfseries\color{reportink}}
+{\textcolor{reportaccent}{\thesection}}{0.75em}{}
+\titlespacing*{\section}{0pt}{1.3\baselineskip}{0.45\baselineskip}
+\setlength{\parindent}{0pt}
+\setlength{\emergencystretch}{2em}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=reportaccent,
+  urlcolor=reportaccent,
+  citecolor=reportaccent,
+  breaklinks=true,
+  pdftitle={Litoteca: clasificación de rocas con visión por computador},
+  pdfauthor={Jheison Martinez Bolivar}
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\nouppercase{\leftmark}}
+\fancyhead[R]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\fancypagestyle{plain}{%
+  \fancyhf{}%
+  \fancyhead[R]{\thepage}%
+  \renewcommand{\headrulewidth}{0pt}%
+}
+
+\begin{document}
+
+  \pagenumbering{roman}
+
+  \begin{titlepage}
+    \centering
+    \vspace*{1.2cm}
+    {\scshape\Large Universidad de La Salle \par}
+    \vspace{0.35cm}
+    {\large Facultad de Ingeniería \par}
+    \vspace{0.8cm}
+    {\color{reportmark}\rule{4cm}{2.4pt}\par}
+    \vspace{1.8cm}
+    {\huge\bfseries Litoteca \par}
+    \vspace{0.5cm}
+    {\Large Clasificación de rocas con visión por computador e integración en aplicación web \par}
+    \vspace{2.4cm}
+    {\large
+      \textbf{\lblAuthor:} Jheison Martinez Bolivar\\[0.35cm]
+      \textbf{\lblCourse:} Visión por Computador\\[0.35cm]
+      \textbf{Actividad:} Implementación de modelo de clasificación y aplicación práctica\par}
+    \vfill
+    {\large Bogotá, Colombia \par}
+    \vspace{0.25cm}
+    {\large \today \par}
+    \vspace*{1.0cm}
+  \end{titlepage}
+
+  \chapter*{\abstractname}
+  \addcontentsline{toc}{chapter}{\abstractname}
+  Litoteca es un prototipo de clasificación de muestras de roca con visión por
+  computador, integrado en una aplicación web móvil. El sistema permite capturar
+  o cargar una imagen de una roca, enviarla a un modelo de clasificación y
+  presentar la predicción junto con una ficha explicativa: nombre común y técnico,
+  origen, proceso de formación, gemelas probables y nivel de confianza.
+
+  El dataset se preparó a partir del conjunto \emph{Rock Classification} de
+  Kaggle/Roboflow, con 9 clases ígneas y sedimentarias. Se realizó deduplicación
+  por imagen original, reconstrucción de splits sin fuga entre entrenamiento,
+  validación y prueba, y limpieza de conflictos de etiquetado. Se generó además
+  una versión limpia para entrenamiento en Azure Custom Vision, eliminando
+  aumentos sintéticos redundantes y conflictos de etiqueta.
+
+  La aplicación fue desplegada como sitio estático en Cloudflare Pages, con una
+  Pages Function que actúa como proxy del modelo. Se completó un entrenamiento
+  Quick en Azure Custom Vision sobre el dataset limpio, obteniendo precisión
+  83.08\%, recall 52.43\% y AP 72.74\%. Estas métricas iniciales permiten conectar
+  la iteración para la demo, mientras se prepara una iteración adicional para
+  mejorar el desempeño, especialmente en clases con recall bajo.
+
+  \tableofcontents
+
+  \clearpage
+  \pagenumbering{arabic}
+
+  \input{chapters/introduction}
+  \input{chapters/background}
+  \input{chapters/methodology}
+  \input{chapters/results}
+  \input{chapters/conclusions}
+
+  \bibliographystyle{plain}
+  \clearpage
+  \phantomsection
+  \addcontentsline{toc}{chapter}{\bibname}
+  \bibliography{bib/references}
+
+  \appendix
+  \input{chapters/appendix}
+
+\end{document}

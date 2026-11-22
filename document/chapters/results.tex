@@ -1,0 +1,202 @@
+\chapter{Resultados y estado actual}
+\label{ch:results}
+
+\section{Resultados de preparación de datos}
+
+La preparación del dataset permitió pasar de un export con fuga entre splits a un
+conjunto trazable y defendible. Los principales resultados de esta etapa son:
+
+\begin{itemize}
+  \item 4.212 archivos originales analizados; 1.754 clusters/originales identificados.
+  \item 55 descartes por duplicados/casi-duplicados en evaluación.
+  \item 284 pares de casi-duplicados entre clusters y 22 conflictos de etiqueta
+        documentados.
+  \item Split limpio sin intersección de clusters: 3.428 train, 209 valid, 146 test.
+  \item Versión limpia para entrenamiento: 1.325 train, 209 valid, 146 test, con una
+        imagen por cluster y exclusión de conflictos de etiqueta.
+\end{itemize}
+
+La limpieza de conflictos es relevante porque varias confusiones esperadas ocurren
+entre clases visualmente similares, en especial \emph{chert}, \emph{diatomite} y
+\emph{siliceous-sinter}. La Figura~\ref{fig:siliceas} ilustra ejemplos de procesos
+asociados a estas clases.
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{0.48\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{assets/images/chert.png}
+  \end{minipage}\hfill
+  \begin{minipage}{0.48\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{assets/images/siliceous-sinter.png}
+  \end{minipage}
+  \caption{Ejemplos de ilustraciones de proceso para clases síliceas}
+  \label{fig:siliceas}
+\end{figure}
+
+\section{Resultados de la aplicación}
+
+La aplicación Litoteca se encuentra desplegada en Cloudflare Pages:
+\url{https://litoteca.pages.dev/}. El repositorio público está en
+\url{https://github.com/JheisonMB/litoteca}.
+
+Funcionalidades implementadas:
+
+\begin{table}[H]
+  \centering
+  \caption{Funcionalidades implementadas en Litoteca}
+  \label{tab:funcionalidades}
+  \begin{tabular}{@{}p{4.2cm}p{8.2cm}@{}}
+    \toprule
+    Funcionalidad & Estado \\
+    \midrule
+    Carga/captura de imagen & Implementada, con validación de tipo y tamaño. \\
+    Ficha por clase & Implementada para las 9 clases. \\
+    Historial local & Implementado con \texttt{localStorage}. \\
+    Mock/galería & Implementado con \texttt{?mock=1} y \texttt{?galeria=1}. \\
+    Proxy de predicción & Implementado en \texttt{functions/api/predict.js}. \\
+    Modo sin conexión & Implementado con service worker y mensaje honesto. \\
+    Despliegue CF Pages & Implementado con GitHub Actions y Wrangler. \\
+    Métricas finales del modelo & Pendientes de la iteración final en Custom Vision. \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.75\linewidth]{assets/images/og-image.png}
+  \caption{Vista de identidad visual de Litoteca}
+  \label{fig:og}
+\end{figure}
+
+\section{Resultados del entrenamiento Quick}
+
+Se verificó por API la iteración del proyecto limpio \texttt{litoteca-clean-quick}
+(Iteration 1, \texttt{6276ca2b-e084-4520-a4ff-682eeab34885}). El entrenamiento
+finalizó con estado \texttt{Completed}, tipo reportado por API \texttt{Regular},
+fecha \texttt{2026-11-22T18:49:49.163Z}, sin publicación y no exportable.
+
+\begin{table}[H]
+  \centering
+  \caption{Métricas globales de la iteración Quick}
+  \label{tab:metricas-globales}
+  \begin{tabular}{@{}lc@{}}
+    \toprule
+    Métrica & Valor \\
+    \midrule
+    Precision & 83.08\% \\
+    Recall & 52.43\% \\
+    Average Precision (AP) & 72.74\% \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \caption{Métricas por clase de la iteración Quick}
+  \label{tab:metricas-clase}
+  \begin{tabular}{@{}lrrr@{}}
+    \toprule
+    Clase & Precision & Recall & AP \\
+    \midrule
+    basalt & 83.33\% & 67.57\% & 82.95\% \\
+    chert & 88.89\% & 47.06\% & 74.89\% \\
+    clay & 73.33\% & 30.56\% & 61.76\% \\
+    conglomerate & 92.86\% & 72.22\% & 83.90\% \\
+    diatomite & 70.59\% & 35.29\% & 59.01\% \\
+    gypsum & 86.21\% & 73.53\% & 76.26\% \\
+    olivine-basalt & 92.31\% & 75.00\% & 90.65\% \\
+    shale & 53.85\% & 20.59\% & 47.80\% \\
+    siliceous-sinter & 84.21\% & 50.00\% & 65.54\% \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+La lectura inicial muestra buen desempeño en \emph{olivine-basalt},
+\emph{conglomerate}, \emph{basalt} y \emph{gypsum}, pero recall bajo en
+\emph{shale}, \emph{clay}, \emph{diatomite} y \emph{siliceous-sinter}. Esto es
+coherente con la similitud visual entre clases y con los conflictos síliceos
+documentados en la preparación del dataset.
+
+\section{Plan de mejora y validación para demo}
+
+Para la demo del día se puede publicar/conectar esta iteración Quick como modelo
+base, y en paralelo lanzar una nueva iteración (por ejemplo Advanced o con ajustes
+de dataset) sin bloquear la entrega. Si una iteración posterior mejora las métricas,
+se actualiza la publicación o la configuración de la Function en Cloudflare Pages.
+
+La validación se plantea en dos niveles:
+
+\begin{enumerate}
+  \item \textbf{Prueba sintética por API}: ejecutar predicciones sobre imágenes del
+        conjunto \texttt{test} limpio ya disponible en \texttt{data/prepared-clean-train/test},
+        registrar etiqueta esperada, predicción top-1, confianza y aciertos/errores.
+        Esto da evidencia reproducible aunque la evaluación no sea en campo.
+  \item \textbf{Prueba de campo para demo}: usar fotos reales tomadas con celular en
+        condiciones controladas (buena luz, fondo simple, roca centrada) para mostrar
+        el flujo completo de la aplicación. Dado el contexto de la entrega, el foco
+        de la demo es la integración funcional y la explicación de resultados, no una
+        pericia geológica experta.
+\end{enumerate}
+
+Las métricas complementarias solicitadas (F1-score, curva ROC y AUC) se pueden
+calcular sobre los resultados de prueba por API/exportación de predicciones, además
+de las métricas nativas reportadas por Custom Vision.
+
+\section{Validación sintética por API}
+
+Se ejecutó una prueba sintética contra la iteración publicada \texttt{litoteca-v1}
+usando el conjunto \texttt{data/prepared-clean-train/test} (146 imágenes, una por
+cluster, sin fuga). La llamada se realizó al endpoint de predicción de Custom
+Vision con la misma clase de contrato que consume la aplicación.
+
+\begin{table}[H]
+  \centering
+  \caption{Resultado de validación sintética por API (test limpio)}
+  \label{tab:api-test}
+  \begin{tabular}{@{}lrrr@{}}
+    \toprule
+    Clase & Aciertos & Total & Accuracy \\
+    \midrule
+    basalt & 10 & 15 & 66.67\% \\
+    chert & 10 & 14 & 71.43\% \\
+    clay & 3 & 12 & 25.00\% \\
+    conglomerate & 8 & 13 & 61.54\% \\
+    diatomite & 9 & 19 & 47.37\% \\
+    gypsum & 19 & 23 & 82.61\% \\
+    olivine-basalt & 17 & 19 & 89.47\% \\
+    shale & 12 & 20 & 60.00\% \\
+    siliceous-sinter & 7 & 11 & 63.64\% \\
+    \midrule
+    \textbf{Total} & \textbf{95} & \textbf{146} & \textbf{65.07\%} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Los errores más frecuentes confirman la dificultad de clases visualmente cercanas:
+diatomite$\rightarrow$shale (4), clay$\rightarrow$shale (3),
+conglomerate$\rightarrow$clay (3), entre otros. La Tabla~\ref{tab:api-ejemplos}
+muestra un ejemplo por clase obtenido por API.
+
+\begin{table}[H]
+  \centering
+  \caption{Ejemplos de predicción por API (una muestra por clase)}
+  \label{tab:api-ejemplos}
+  \small
+  \begin{tabular}{@{}llrl@{}}
+    \toprule
+    Esperada & Predicha & Conf. & Top-3 (resumen) \\
+    \midrule
+    basalt & basalt & 86.89\% & basalt, shale, clay \\
+    chert & chert & 77.10\% & chert, diatomite, shale \\
+    clay & clay & 69.42\% & clay, shale, chert \\
+    conglomerate & conglomerate & 83.07\% & conglomerate, siliceous-sinter, chert \\
+    diatomite & diatomite & 85.15\% & diatomite, gypsum, shale \\
+    gypsum & gypsum & 92.87\% & gypsum, siliceous-sinter, chert \\
+    olivine-basalt & olivine-basalt & 43.56\% & olivine-basalt, basalt, shale \\
+    shale & shale & 57.38\% & shale, diatomite, clay \\
+    siliceous-sinter & siliceous-sinter & 95.13\% & siliceous-sinter, gypsum, clay \\
+    \bottomrule
+  \end{tabular}
+\end{table}

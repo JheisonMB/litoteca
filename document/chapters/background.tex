@@ -1,0 +1,74 @@
+\chapter{Marco conceptual}
+\label{ch:background}
+
+\section{Clasificación de imágenes}
+
+La clasificación de imágenes es una tarea de visión por computador donde un modelo
+asigna una etiqueta a una imagen de entrada. En este proyecto, la entrada es una
+fotografía de una roca y la salida es una de nueve clases posibles. El modelo
+devuelve probabilidades por clase; la aplicación usa la clase con mayor probabilidad
+como predicción principal y muestra también alternativas cercanas.
+
+\section{Azure Custom Vision}
+
+Azure Custom Vision es un servicio de Azure Cognitive Services para entrenar
+modelos de clasificación y detección de objetos con un flujo gestionado. Permite
+cargar imágenes etiquetadas, entrenar iteraciones, evaluar el desempeño y publicar
+un endpoint de predicción~\cite{azurecustomvision}.
+
+Para Litoteca se seleccionó Custom Vision por su facilidad para entrenar un
+clasificador multiclase, exponer una API de predicción y separar el entrenamiento
+del consumo desde una aplicación web. La aplicación no expone las credenciales al
+navegador: un proxy en Cloudflare Pages recibe la imagen y consulta la API de
+predicción.
+
+\section{Métricas de evaluación}
+
+La evaluación de un clasificador multiclase se apoya en métricas derivadas de la
+matriz de confusión. Para cada clase se consideran verdaderos positivos (VP),
+falsos positivos (FP) y falsos negativos (FN).
+
+\begin{equation}
+  \mathrm{Precision} = \frac{VP}{VP + FP}
+  \label{eq:precision}
+\end{equation}
+
+\begin{equation}
+  \mathrm{Recall} = \frac{VP}{VP + FN}
+  \label{eq:recall}
+\end{equation}
+
+\begin{equation}
+  F1 = 2 \cdot \frac{\mathrm{Precision} \cdot \mathrm{Recall}}{\mathrm{Precision} + \mathrm{Recall}}
+  \label{eq:f1}
+\end{equation}
+
+Además, la curva ROC y el área bajo la curva (AUC) permiten analizar el
+comportamiento del modelo según el umbral de decisión. En la entrega final, estas
+métricas se reportarán con la iteración entrenada y publicada de Custom Vision.
+
+\section{Clases del prototipo}
+
+El prototipo considera nueve clases, seleccionadas por disponibilidad en el dataset
+y por su valor didáctico. La Tabla~\ref{tab:clases} resume la taxonomía usada.
+
+\begin{table}[H]
+  \centering
+  \caption{Clases consideradas en Litoteca}
+  \label{tab:clases}
+  \begin{tabular}{@{}llll@{}}
+    \toprule
+    ID & Nombre común & Nombre técnico & Origen \\
+    \midrule
+    basalt & Basalto & Basalt & Ígneo \\
+    olivine-basalt & Basalto olivínico & Olivine basalt & Ígneo \\
+    chert & Sílex & Chert & Sedimentario \\
+    clay & Arcilla & Clay & Sedimentario \\
+    conglomerate & Conglomerado & Conglomerate & Sedimentario \\
+    diatomite & Diatomita & Diatomite & Sedimentario \\
+    gypsum & Yeso & Gypsum & Sedimentario \\
+    shale & Lutita & Shale (mudstone) & Sedimentario \\
+    siliceous-sinter & Sinter silíceo & Siliceous sinter & Sedimentario \\
+    \bottomrule
+  \end{tabular}
+\end{table}

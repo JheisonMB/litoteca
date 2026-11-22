@@ -98,8 +98,8 @@ const path = require("path");
 for (const id of esperadas) {
   const f = fichas[id];
   if (!f) continue;
-  const esperado = `/assets/rocas/${id}.svg`;
-  if (f.ilustracion !== esperado) { errores.push(`${id}: ilustracion debe ser ${esperado}`); continue; }
+  const esperados = [`/assets/rocas/${id}.webp`, `/assets/rocas/${id}.svg`];
+  if (!esperados.includes(f.ilustracion)) { errores.push(`${id}: ilustracion debe ser ${esperados[0]} o svg`); continue; }
   if (!fs.existsSync(path.join(".", f.ilustracion))) errores.push(`${id}: falta el archivo .${f.ilustracion}`);
 }
 

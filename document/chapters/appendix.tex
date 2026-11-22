@@ -1,0 +1,51 @@
+\chapter{Material suplementario}
+\label{app:supplementary}
+
+\section{Enlaces del proyecto}
+
+\begin{table}[H]
+  \centering
+  \caption{Recursos del proyecto Litoteca}
+  \label{tab:recursos}
+  \begin{tabular}{@{}p{4.2cm}p{8.2cm}@{}}
+    \toprule
+    Recurso & URL / referencia \\
+    \midrule
+    Repositorio GitHub & \url{https://github.com/JheisonMB/litoteca} \\
+    Aplicación desplegada & \url{https://litoteca.pages.dev/} \\
+    Mock de fichas & \url{https://litoteca.pages.dev/?mock=1} \\
+    Galería de fichas & \url{https://litoteca.pages.dev/?galeria=1} \\
+    Dataset fuente & \url{https://www.kaggle.com/datasets/stealthtechnologies/rock-classification} \\
+    Custom Vision & \url{https://azure.microsoft.com/services/cognitive-services/custom-vision-service/} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\section{Trazabilidad del dataset}
+
+El dataset preparado incluye los siguientes artefactos en \texttt{data/prepared/}:
+
+\begin{itemize}
+  \item \texttt{manifest.csv}: procedencia, split, clase, hash perceptual.
+  \item \texttt{stats.json}: conteos por clase y motivos de descarte.
+  \item \texttt{conflicts.csv}: 22 pares con etiqueta contradictoria.
+  \item \texttt{near\_duplicates.csv}: casi-duplicados entre clusters.
+  \item \texttt{descartadas.csv}: registros excluidos.
+\end{itemize}
+
+Para el entrenamiento limpio se generó \texttt{data/prepared-clean-train/} con una
+imagen por cluster y exclusión de conflictos de etiqueta. El reporte de limpieza se
+encuentra en \texttt{clean\_report.json}.
+
+\section{Evidencia de despliegue}
+
+El despliegue se realiza con GitHub Actions (\texttt{.github/workflows/deploy.yml})
+y Cloudflare Wrangler. Los secretos del modelo se configuran en Cloudflare Pages
+como variables de runtime de la Function, no en el frontend:
+
+\begin{itemize}
+  \item \texttt{CUSTOM\_VISION\_ENDPOINT}
+  \item \texttt{CUSTOM\_VISION\_KEY}
+  \item \texttt{CUSTOM\_VISION\_PROJECT}
+  \item \texttt{CUSTOM\_VISION\_ITERATION}
+\end{itemize}

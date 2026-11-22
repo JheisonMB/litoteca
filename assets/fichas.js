@@ -5,7 +5,7 @@
 window.LITOTECA_FICHAS = {
   basalt: {
     id: "basalt", nombre: "Basalto", tecnico: "Basalt", origen: "igneo",
-    ilustracion: "/assets/rocas/basalt.svg",
+    ilustracion: "/assets/rocas/basalt.webp",
     proceso: "/assets/rocas/procesos/basalt.webp",
     procesoAlt: "Ilustración: la lava se enfría rápido en superficie y queda como basalto microcristalino.",
     wiki: "Basalto",
@@ -19,7 +19,7 @@ window.LITOTECA_FICHAS = {
   },
   "olivine-basalt": {
     id: "olivine-basalt", nombre: "Basalto olivínico", tecnico: "Olivine basalt", origen: "igneo",
-    ilustracion: "/assets/rocas/olivine-basalt.svg",
+    ilustracion: "/assets/rocas/olivine-basalt.webp",
     proceso: "/assets/rocas/procesos/olivine-basalt.webp",
     procesoAlt: "Ilustración: el olivino cristaliza en profundidad y la lava lo sube rápido a la superficie.",
     wiki: "Basalto",
@@ -33,7 +33,7 @@ window.LITOTECA_FICHAS = {
   },
   chert: {
     id: "chert", nombre: "Sílex", tecnico: "Chert", origen: "sedimentario",
-    ilustracion: "/assets/rocas/chert.svg",
+    ilustracion: "/assets/rocas/chert.webp",
     proceso: "/assets/rocas/procesos/chert.webp",
     procesoAlt: "Ilustración: la sílice disuelta precipita en el sedimento y forma nódulos de sílex.",
     wiki: "Sílex",
@@ -47,7 +47,7 @@ window.LITOTECA_FICHAS = {
   },
   clay: {
     id: "clay", nombre: "Arcilla", tecnico: "Clay", origen: "sedimentario",
-    ilustracion: "/assets/rocas/clay.svg",
+    ilustracion: "/assets/rocas/clay.webp",
     proceso: "/assets/rocas/procesos/clay.webp",
     procesoAlt: "Ilustración: la meteorización forma arcilla que el agua arrastra y deposita en zonas tranquilas.",
     wiki: "Arcilla",
@@ -61,7 +61,7 @@ window.LITOTECA_FICHAS = {
   },
   conglomerate: {
     id: "conglomerate", nombre: "Conglomerado", tecnico: "Conglomerate", origen: "sedimentario",
-    ilustracion: "/assets/rocas/conglomerate.svg",
+    ilustracion: "/assets/rocas/conglomerate.webp",
     proceso: "/assets/rocas/procesos/conglomerate.webp",
     procesoAlt: "Ilustración: el agua redondea la grava, la deposita y un cemento la une en conglomerado.",
     wiki: "Conglomerado (geología)",
@@ -75,7 +75,7 @@ window.LITOTECA_FICHAS = {
   },
   diatomite: {
     id: "diatomite", nombre: "Diatomita", tecnico: "Diatomite", origen: "sedimentario",
-    ilustracion: "/assets/rocas/diatomite.svg",
+    ilustracion: "/assets/rocas/diatomite.webp",
     proceso: "/assets/rocas/procesos/diatomite.webp",
     procesoAlt: "Ilustración: las diatomeas mueren y sus esqueletos se acumulan en capas blancas.",
     wiki: "Diatomita",
@@ -89,7 +89,7 @@ window.LITOTECA_FICHAS = {
   },
   gypsum: {
     id: "gypsum", nombre: "Yeso", tecnico: "Gypsum", origen: "sedimentario",
-    ilustracion: "/assets/rocas/gypsum.svg",
+    ilustracion: "/assets/rocas/gypsum.webp",
     proceso: "/assets/rocas/procesos/gypsum.webp",
     procesoAlt: "Ilustración: el agua salada se evapora y el sulfato precipita como yeso junto a la halita.",
     wiki: "Yeso",
@@ -103,7 +103,7 @@ window.LITOTECA_FICHAS = {
   },
   shale: {
     id: "shale", nombre: "Lutita", tecnico: "Shale (mudstone)", origen: "sedimentario",
-    ilustracion: "/assets/rocas/shale.svg",
+    ilustracion: "/assets/rocas/shale.webp",
     proceso: "/assets/rocas/procesos/shale.webp",
     procesoAlt: "Ilustración: el lodo se compacta en aguas tranquilas y forma lutita en láminas.",
     wiki: "Lutita",
@@ -117,7 +117,7 @@ window.LITOTECA_FICHAS = {
   },
   "siliceous-sinter": {
     id: "siliceous-sinter", nombre: "Geiserita", tecnico: "Siliceous sinter", origen: "sedimentario",
-    ilustracion: "/assets/rocas/siliceous-sinter.svg",
+    ilustracion: "/assets/rocas/siliceous-sinter.webp",
     proceso: "/assets/rocas/procesos/siliceous-sinter.webp",
     procesoAlt: "Ilustración: el agua termal se enfría al salir y precipita sílice alrededor del brote.",
     wiki: "Geiserita",
