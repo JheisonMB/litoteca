@@ -440,7 +440,7 @@
     }
 
     var compartir = $("#btn-compartir");
-    if (compartir) compartir.addEventListener("click", function () { compartirFicha(ficha, respuesta); });
+    if (compartir) compartir.addEventListener("click", function () { compartirFicha(ficha, respuesta, compartir); });
 
     var irA = dom.resultado.querySelector("[data-ir-a]");
     if (irA) {
@@ -530,20 +530,178 @@
 
   /* ---------------- compartir ---------------- */
 
-  function compartirFicha(ficha, respuesta) {
-    var texto = ficha.nombre + " (" + ficha.tecnico + ") · confianza " + porcentaje(respuesta.confianza) +
-      ". Identificada con Litoteca.";
-    if (navigator.share) {
-      navigator.share({ title: "Litoteca · " + ficha.nombre, text: texto }).catch(function () {});
-      return;
+  function cargarImagen(url) {
+    return new Promise(function (resolve, reject) {
+      var img = new Image();
+      img.onload = function () { resolve(img); };
+      img.onerror = function () { reject(new Error("foto no legible")); };
+      img.src = url;
+    });
+  }
+
+  function redondear(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+
+  function envolver(ctx, texto, maxAncho) {
+    var palabras = String(texto == null ? "" : texto).split(/\s+/).filter(Boolean);
+    var lineas = [];
+    var actual = "";
+    palabras.forEach(function (palabra) {
+      var prueba = actual ? actual + " " + palabra : palabra;
+      if (actual && ctx.measureText(prueba).width > maxAncho) {
+        lineas.push(actual);
+        actual = palabra;
+      } else {
+        actual = prueba;
+      }
+    });
+    if (actual) lineas.push(actual);
+    if (!lineas.length) lineas.push("");
+    return lineas;
+  }
+
+  var TARJETA = {
+    ancho: 1080, alto: 1350, x: 100, w: 880,
+    papel: "#f7f4ee", tinta: "#1b1a17", tinta2: "#57534b", tinta3: "#6b665d",
+    filete: "#e2dbcd", pista: "#efeae0",
+    acentos: { igneo: "#c2410c", sedimentario: "#a16207" },
+    pie: "Litoteca · jhmartinez07@unisalle.edu.co"
+  };
+
+  function componerTarjeta(ficha, respuesta) {
+    var T = TARJETA;
+    var lienzo = document.createElement("canvas");
+    lienzo.width = T.ancho;
+    lienzo.height = T.alto;
+    var ctx = lienzo.getContext("2d");
+    ctx.fillStyle = T.papel;
+    ctx.fillRect(0, 0, T.ancho, T.alto);
+
+    var fotoLista = (typeof estado.foto === "string" && estado.foto)
+      ? cargarImagen(estado.foto).catch(function () { return null; })
+      : Promise.resolve(null);
+
+    return fotoLista.then(function (img) {
+      var yNombre = img ? 1030 : 190;
+      if (img) {
+        var lado = Math.min(img.naturalWidth, img.naturalHeight) || 1;
+        ctx.save();
+        redondear(ctx, T.x, 70, T.w, T.w, 24);
+        ctx.clip();
+        ctx.drawImage(img,
+          (img.naturalWidth - lado) / 2, (img.naturalHeight - lado) / 2, lado, lado,
+          T.x, 70, T.w, T.w);
+        ctx.restore();
+        ctx.strokeStyle = T.filete;
+        ctx.lineWidth = 2;
+        redondear(ctx, T.x, 70, T.w, T.w, 24);
+        ctx.stroke();
+      }
+
+      var acento = T.acentos[ficha.origen] || T.tinta;
+
+      ctx.textAlign = "center";
+      ctx.textBaseline = "alphabetic";
+      ctx.fillStyle = T.tinta;
+      ctx.font = "88px Georgia, serif";
+      var lineas = envolver(ctx, ficha.nombre, T.w);
+      lineas.forEach(function (linea, i) {
+        ctx.fillText(linea, 640, yNombre + i * 100);
+      });
+
+      var yTec = yNombre + (lineas.length - 1) * 100 + 60;
+      ctx.fillStyle = T.tinta2;
+      ctx.font = "34px monospace";
+      ctx.fillText(ficha.tecnico || "", 640, yTec);
+
+      var yChip = yTec + 80;
+      var etiqueta = ORIGEN_TEXTO[ficha.origen] || ficha.origen || "";
+      ctx.font = "34px monospace";
+      var anchoTexto = ctx.measureText(etiqueta).width;
+      var xGrupo = 640 - (28 + 16 + anchoTexto) / 2;
+      ctx.fillStyle = acento;
+      ctx.beginPath();
+      ctx.arc(xGrupo + 14, yChip - 12, 14, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.textAlign = "left";
+      ctx.fillText(etiqueta, xGrupo + 28 + 16, yChip);
+      ctx.textAlign = "center";
+
+      var hayConfianza = !!(respuesta && typeof respuesta.confianza === "number");
+      ctx.fillStyle = T.tinta3;
+      ctx.font = "28px system-ui, sans-serif";
+      ctx.textAlign = "left";
+      ctx.fillText("Confianza", T.x, 1280);
+      ctx.font = "30px monospace";
+      ctx.textAlign = "right";
+      ctx.fillText(hayConfianza ? Math.round(respuesta.confianza * 100) + " %" : "Desconocida", T.x + T.w, 1280);
+      ctx.textAlign = "center";
+
+      if (hayConfianza) {
+        ctx.fillStyle = T.pista;
+        redondear(ctx, T.x, 1300, T.w, 16, 8);
+        ctx.fill();
+        var relleno = Math.max(16, Math.round(respuesta.confianza * T.w));
+        ctx.fillStyle = T.tinta;
+        redondear(ctx, T.x, 1300, relleno, 16, 8);
+        ctx.fill();
+      }
+
+      ctx.fillStyle = T.tinta3;
+      ctx.font = "24px monospace";
+      ctx.fillText(T.pie, 640, 1340);
+
+      return new Promise(function (resolve, reject) {
+        lienzo.toBlob(function (blob) {
+          if (blob) resolve(blob);
+          else reject(new Error("lienzo vacio"));
+        }, "image/png");
+      });
+    });
+  }
+
+  // Expuesta para verificarla desde la consola; la pagina no usa modulos.
+  window.componerTarjeta = componerTarjeta;
+
+  async function compartirFicha(ficha, respuesta, boton) {
+    var btn = boton || $("#btn-compartir");
+    var original = btn ? btn.textContent : "";
+    if (btn) { btn.disabled = true; btn.textContent = "Preparando…"; }
+    try {
+      var blob = await componerTarjeta(ficha, respuesta);
+      var archivo = new File([blob], "litoteca-" + ficha.id + ".png", { type: "image/png" });
+      var texto = ficha.nombre + " (" + ficha.tecnico + ") · confianza " +
+        ((respuesta && typeof respuesta.confianza === "number") ? porcentaje(respuesta.confianza) : "Desconocida") +
+        ". Identificada con Litoteca.";
+      var compartible = false;
+      try {
+        compartible = !!(navigator.canShare && navigator.canShare({ files: [archivo] }));
+      } catch (e) { compartible = false; }
+      if (compartible) {
+        await navigator.share({ files: [archivo], title: "Litoteca · " + ficha.nombre, text: texto });
+        return;
+      }
+      var url = URL.createObjectURL(blob);
+      var enlace = document.createElement("a");
+      enlace.href = url;
+      enlace.download = "litoteca-" + ficha.id + ".png";
+      document.body.appendChild(enlace);
+      enlace.click();
+      enlace.remove();
+      window.setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+      anunciar("Tarjeta descargada.");
+    } catch (error) {
+      anunciar("No pudimos preparar la tarjeta.");
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = original || "Compartir"; }
     }
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(texto).then(function () {
-        anunciar("Texto copiado al portapapeles.");
-      }).catch(function () { window.prompt("Copia el texto:", texto); });
-      return;
-    }
-    window.prompt("Copia el texto:", texto);
   }
 
   /* ---------------- historial ---------------- */

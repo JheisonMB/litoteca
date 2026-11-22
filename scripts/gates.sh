@@ -39,6 +39,11 @@ if faltan:
 print(f"  ok  {len(pedidos - dinamicos)} ids verificados")
 PY
 
+echo "== 2b/8 tarjeta compartible en PNG"
+grep -q "function componerTarjeta" assets/app.js || fallo "falta componerTarjeta en assets/app.js"
+grep -A80 "function compartirFicha" assets/app.js | grep -q "componerTarjeta(" || fallo "compartirFicha no compone la tarjeta"
+ok "componerTarjeta existe y compartirFicha la usa"
+
 echo "== 3/8 las 9 fichas"
 node - <<'JS' || fallos=$((fallos + 1))
 global.window = {};
