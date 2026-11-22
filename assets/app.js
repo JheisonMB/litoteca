@@ -229,7 +229,13 @@
 
     predecir(blob)
       .then(function (respuesta) { pintarResultado(respuesta, { conAcciones: true }); })
-      .catch(function (error) { mostrarError(error.mensaje || "No pudimos analizar la muestra.", true); });
+      .catch(function (error) {
+        var esNoRoca = error && error.error === "no_es_roca";
+        mostrarError(error.mensaje || "No pudimos analizar la muestra.", {
+          reintentar: !esNoRoca,
+          titulo: esNoRoca ? "No identificamos una roca" : "No pudimos analizar la muestra"
+        });
+      });
   }
 
   function predecir(blob) {
@@ -244,7 +250,7 @@
           return respuesta.json().catch(function () { return {}; }).then(function (cuerpo) {
             if (cuerpo && cuerpo.mensaje) throw { mensaje: cuerpo.mensaje, error: cuerpo.error };
             if (respuesta.status === 400) throw { mensaje: "No pudimos leer esa imagen. Prueba con otra foto en JPEG, PNG o WebP." };
-            throw { mensaje: "No alcanzamos el modelo. Revisa la conexión e intenta de nuevo." };
+            throw { mensaje: "No pudimos consultar el modelo. Revisa tu conexión e intenta de nuevo." };
           });
         }
         return respuesta.json();
@@ -252,7 +258,7 @@
       .catch(function (error) {
         if (error && error.mensaje) throw error;
         if (!navigator.onLine) throw { mensaje: "Sin conexión: la predicción vive en la nube. El historial y las fichas siguen disponibles." };
-        throw { mensaje: "No alcanzamos el modelo. Revisa la conexión e intenta de nuevo." };
+        throw { mensaje: "No pudimos consultar el modelo. Revisa tu conexión e intenta de nuevo." };
       });
   }
 
@@ -527,17 +533,20 @@
     anunciar("Galería de desarrollo con las nueve fichas.");
   }
 
-  function mostrarError(mensaje, reintentar) {
+  function mostrarError(mensaje, opciones) {
+    var opts = opciones && typeof opciones === "object" ? opciones : { reintentar: !!opciones };
+    var titulo = opts.titulo || "No pudimos analizar la muestra";
+    var reintentar = !!opts.reintentar;
     mostrarVista("resultado");
     dom.resultado.innerHTML =
       '<article class="ficha"><div class="ficha-cuerpo">' +
-      '<div class="aviso-permiso"><h2 tabindex="-1">No pudimos leer la muestra</h2><p>' + esc(mensaje) + "</p>" +
+      '<div class="aviso-permiso"><h2 tabindex="-1">' + esc(titulo) + '</h2><p>' + esc(mensaje) + "</p>" +
       '<div class="acciones-inicio">' +
         (reintentar ? '<button type="button" class="boton principal" id="btn-reintentar">Reintentar</button>' : "") +
         '<button type="button" class="boton" id="btn-subir-error">Subir una foto</button>' +
         '<button type="button" class="boton tenue" id="btn-inicio-error">Volver al inicio</button>' +
       "</div></div></div></article>";
-    anunciar(mensaje);
+    anunciar(titulo + ". " + mensaje);
     var tituloError = dom.resultado.querySelector(".aviso-permiso h2");
     if (tituloError) tituloError.focus({ preventScroll: true });
 

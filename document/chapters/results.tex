@@ -71,54 +71,56 @@ Funcionalidades implementadas:
   \label{fig:og}
 \end{figure}
 
-\section{Resultados del entrenamiento Quick}
+\section{Resultados del entrenamiento Quick v2}
 
-Se verificó por API la iteración del proyecto limpio \texttt{litoteca-clean-quick}
-(Iteration 1, \texttt{6276ca2b-e084-4520-a4ff-682eeab34885}). El entrenamiento
-finalizó con estado \texttt{Completed}, tipo reportado por API \texttt{Regular},
-fecha \texttt{2026-11-22T18:49:49.163Z}, sin publicación y no exportable.
+Se entrenó una segunda iteración Quick en el proyecto limpio
+\texttt{litoteca-clean-quick-v2}
+(\texttt{8bffd799-5b43-486e-8494-f1174d7ca4e7}, Iteration 1,
+\texttt{4792fd31-2f7a-4505-9c72-71c1c3ffe4b8}). El entrenamiento finalizó con
+estado \texttt{Completed}, tipo \texttt{Regular}, tiempo de entrenamiento de 9
+minutos, y se publicó como \texttt{litoteca-v1} en
+\texttt{labunisalle-Prediction}.
 
 \begin{table}[H]
   \centering
-  \caption{Métricas globales de la iteración Quick}
+  \caption{Comparación global entre iteraciones Quick}
   \label{tab:metricas-globales}
-  \begin{tabular}{@{}lc@{}}
+  \begin{tabular}{@{}lrrr@{}}
     \toprule
-    Métrica & Valor \\
+    Iteración & Precision & Recall & AP \\
     \midrule
-    Precision & 83.08\% \\
-    Recall & 52.43\% \\
-    Average Precision (AP) & 72.74\% \\
+    Quick v1 (6276ca2b) & 83.08\% & 52.43\% & 72.74\% \\
+    Quick v2 (4792fd31) & 84.88\% & 54.48\% & 77.77\% \\
     \bottomrule
   \end{tabular}
 \end{table}
 
 \begin{table}[H]
   \centering
-  \caption{Métricas por clase de la iteración Quick}
+  \caption{Métricas por clase de Quick v2}
   \label{tab:metricas-clase}
   \begin{tabular}{@{}lrrr@{}}
     \toprule
     Clase & Precision & Recall & AP \\
     \midrule
-    basalt & 83.33\% & 67.57\% & 82.95\% \\
-    chert & 88.89\% & 47.06\% & 74.89\% \\
-    clay & 73.33\% & 30.56\% & 61.76\% \\
-    conglomerate & 92.86\% & 72.22\% & 83.90\% \\
-    diatomite & 70.59\% & 35.29\% & 59.01\% \\
-    gypsum & 86.21\% & 73.53\% & 76.26\% \\
-    olivine-basalt & 92.31\% & 75.00\% & 90.65\% \\
-    shale & 53.85\% & 20.59\% & 47.80\% \\
-    siliceous-sinter & 84.21\% & 50.00\% & 65.54\% \\
+    basalt & 79.31\% & 69.70\% & 85.43\% \\
+    chert & 85.71\% & 38.71\% & 73.81\% \\
+    clay & 90.00\% & 30.00\% & 64.94\% \\
+    conglomerate & 100.00\% & 77.42\% & 93.16\% \\
+    diatomite & 76.19\% & 59.26\% & 69.36\% \\
+    gypsum & 89.47\% & 54.84\% & 78.59\% \\
+    olivine-basalt & 91.30\% & 75.00\% & 92.49\% \\
+    shale & 63.64\% & 22.58\% & 58.42\% \\
+    siliceous-sinter & 80.95\% & 65.38\% & 78.43\% \\
     \bottomrule
   \end{tabular}
 \end{table}
 
-La lectura inicial muestra buen desempeño en \emph{olivine-basalt},
-\emph{conglomerate}, \emph{basalt} y \emph{gypsum}, pero recall bajo en
-\emph{shale}, \emph{clay}, \emph{diatomite} y \emph{siliceous-sinter}. Esto es
-coherente con la similitud visual entre clases y con los conflictos síliceos
-documentados en la preparación del dataset.
+Quick v2 mejora las métricas globales respecto a Quick v1, especialmente en AP.
+El desempeño sigue siendo fuerte en \emph{conglomerate}, \emph{olivine-basalt},
+\emph{basalt} y \emph{gypsum}, mientras que \emph{shale}, \emph{clay} y
+\emph{chert} mantienen recall bajo, coherente con la similitud visual entre clases
+síliceas y arcillosas documentada en la preparación del dataset.
 
 \section{Resultados del detector roca/no-roca}
 
@@ -154,10 +156,12 @@ con una imagen no-roca en \url{https://litoteca.pages.dev/}.
 
 \section{Plan de mejora y validación para demo}
 
-Para la demo del día se puede publicar/conectar esta iteración Quick como modelo
-base, y en paralelo lanzar una nueva iteración (por ejemplo Advanced o con ajustes
-de dataset) sin bloquear la entrega. Si una iteración posterior mejora las métricas,
-se actualiza la publicación o la configuración de la Function en Cloudflare Pages.
+Quick v2 ya fue publicado como \texttt{litoteca-v1} y conectado a la Function de
+Cloudflare Pages, actualizando \texttt{CUSTOM\_VISION\_PROJECT} al proyecto
+\texttt{litoteca-clean-quick-v2}. Como mejora siguiente, se puede lanzar una
+iteración Advanced o ajustar el dataset para subir el recall en clases difíciles
+(\emph{shale}, \emph{clay}, \emph{chert}); si mejora, se republica sin cambiar el
+contrato de la API.
 
 La validación se plantea en dos niveles:
 
@@ -179,10 +183,13 @@ de las métricas nativas reportadas por Custom Vision.
 
 \section{Validación sintética por API}
 
-Se ejecutó una prueba sintética contra la iteración publicada \texttt{litoteca-v1}
-usando el conjunto \texttt{data/prepared-clean-train/test} (146 imágenes, una por
-cluster, sin fuga). La llamada se realizó al endpoint de predicción de Custom
-Vision con la misma clase de contrato que consume la aplicación.
+Se ejecutó una prueba sintética contra la iteración publicada anteriormente como
+\texttt{litoteca-v1} (Quick v1) usando el conjunto
+\texttt{data/prepared-clean-train/test} (146 imágenes, una por cluster, sin fuga).
+La llamada se realizó al endpoint de predicción de Custom Vision con la misma clase
+de contrato que consume la aplicación. Tras publicar Quick v2 bajo el mismo nombre,
+queda pendiente repetir esta validación API para comparar contra el 65.07\% obtenido
+por Quick v1.
 
 \begin{table}[H]
   \centering
