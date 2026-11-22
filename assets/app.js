@@ -901,4 +901,9 @@
   } else {
     mostrarVista("inicio");
   }
+
+  // Registro del service worker (solo contexto seguro y si el navegador lo soporta).
+  if ("serviceWorker" in navigator && window.isSecureContext) {
+    navigator.serviceWorker.register("/sw.js").catch(function () {});
+  }
 })();

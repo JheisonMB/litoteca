@@ -22,6 +22,34 @@ while IFS= read -r archivo; do
 done < <(find assets functions tools scripts -name '*.js' -o -name '*.mjs' 2>/dev/null | sort)
 ok "todo el JavaScript parsea"
 
+echo "== 1b/8 service worker"
+node --check sw.js || fallo "sintaxis en sw.js"
+python3 - <<'PY' || fallos=$((fallos + 1))
+import re
+import sys
+from pathlib import Path
+
+text = Path("sw.js").read_text(encoding="utf-8")
+m = re.search(r"PRECACHE\s*=\s*\[(.*?)\]", text, re.S)
+if not m:
+    print("no se encontró PRECACHE en sw.js")
+    sys.exit(1)
+paths = re.findall(r"\"([^\"]+)\"", m.group(1))
+if not paths:
+    print("PRECACHE está vacío")
+    sys.exit(1)
+for p in paths:
+    if p == "/":
+        target = Path("index.html")
+    else:
+        target = Path(p.lstrip("/"))
+    if not target.exists():
+        print(f"falta en disco: {p} -> {target}")
+        sys.exit(1)
+print(f"  ok  {len(paths)} rutas de precache existen en disco")
+PY
+ok "sw.js parsea y precache existe"
+
 echo "== 2/8 ids de app.js existen en index.html"
 python3 - <<'PY' || fallos=$((fallos + 1))
 import re, sys
