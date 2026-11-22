@@ -1,7 +1,7 @@
 /* Litoteca service worker.
  * VERSION bump: si cambias cualquier archivo de PRECACHE, cambia VERSION también.
  * En activate se borran todos los cachés cuyo nombre no sea la VERSION actual. */
-const VERSION = "litoteca-v2";
+const VERSION = "litoteca-v3";
 const PRECACHE = [
   "/",
   "/index.html",
@@ -14,6 +14,8 @@ self.addEventListener("install", function (event) {
   event.waitUntil(
     caches.open(VERSION).then(function (cache) {
       return cache.addAll(PRECACHE);
+    }).then(function () {
+      return self.skipWaiting();
     })
   );
 });
@@ -28,6 +30,8 @@ self.addEventListener("activate", function (event) {
           }
         })
       );
+    }).then(function () {
+      return self.clients.claim();
     })
   );
 });

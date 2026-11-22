@@ -56,6 +56,7 @@ Funcionalidades implementadas:
     Historial local & Implementado con \texttt{localStorage}. \\
     Mock/galería & Implementado con \texttt{?mock=1} y \texttt{?galeria=1}. \\
     Proxy de predicción & Implementado en \texttt{functions/api/predict.js}. \\
+    Guardrail roca/no-roca & Implementado; detector binario antes del clasificador, responde HTTP 422 \texttt{no\_es\_roca}. \\
     Modo sin conexión & Implementado con service worker y mensaje honesto. \\
     Despliegue CF Pages & Implementado con GitHub Actions y Wrangler. \\
     Métricas finales del modelo & Pendientes de la iteración final en Custom Vision. \\
@@ -118,6 +119,38 @@ La lectura inicial muestra buen desempeño en \emph{olivine-basalt},
 \emph{shale}, \emph{clay}, \emph{diatomite} y \emph{siliceous-sinter}. Esto es
 coherente con la similitud visual entre clases y con los conflictos síliceos
 documentados en la preparación del dataset.
+
+\section{Resultados del detector roca/no-roca}
+
+Para evitar que el clasificador multiclase fuerce una etiqueta geológica sobre
+imágenes fuera de dominio, se entrenó y publicó un detector binario en Custom
+Vision. El dataset \texttt{data/rock-detector} contiene 150 imágenes de
+\texttt{rock} y 150 de \texttt{not\_rock}. La iteración
+\texttt{2d92f618-115e-4a73-a9ed-006002782c7c} del proyecto
+\texttt{2dc1aedb-f66c-4fb1-abc5-54c253440052} se publicó como
+\texttt{litoteca-detector-v1} en \texttt{labunisalle-Prediction}.
+
+\begin{table}[H]
+  \centering
+  \caption{Métricas del detector roca/no-roca}
+  \label{tab:detector-metricas}
+  \begin{tabular}{@{}lrrr@{}}
+    \toprule
+    Etiqueta / Global & Precision & Recall & AP \\
+    \midrule
+    not\_rock & 100.00\% & 100.00\% & --- \\
+    rock & 100.00\% & 96.70\% & --- \\
+    \midrule
+    \textbf{Global} & \textbf{100.00\%} & \textbf{98.28\%} & \textbf{99.97\%} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+En producción, la Function consulta el detector antes del clasificador. Cuando la
+imagen se clasifica como \texttt{not\_rock} o la probabilidad de \texttt{rock}
+es menor que 0.5, la API responde HTTP 422 con código \texttt{no\_es\_roca} y el
+mensaje ``No identificamos una roca en la imagen''. Esta verificación se confirmó
+con una imagen no-roca en \url{https://litoteca.pages.dev/}.
 
 \section{Plan de mejora y validación para demo}
 
