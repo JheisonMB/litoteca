@@ -1,0 +1,116 @@
+\section{Validación y resultados}
+\label{sec:results}
+
+\subsection{Resultados de preparación de datos}
+
+La preparación del dataset permitió pasar de un export con fuga entre splits a un
+conjunto trazable. Los principales resultados de esta etapa son:
+
+\begin{itemize}
+  \item 4.212 archivos originales analizados; 1.754 clusters/originales identificados.
+  \item 55 descartes por duplicados o casi-duplicados en evaluación.
+  \item 284 pares de casi-duplicados entre clusters y 22 conflictos de etiqueta
+        documentados.
+  \item Split limpio sin intersección de clusters: 3.428 train, 209 valid, 146 test.
+  \item Versión limpia para entrenamiento: 1.325 train, 209 valid, 146 test, con una
+        imagen por cluster y exclusión de conflictos de etiqueta.
+\end{itemize}
+
+La limpieza de conflictos es relevante porque varias confusiones esperadas ocurren
+entre clases visualmente similares, en especial \emph{chert}, \emph{diatomite} y
+\emph{siliceous-sinter} (geiserita). La Figura~\ref{fig:siliceas} ilustra ejemplos
+de procesos asociados a estas clases.
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{0.48\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{assets/images/chert.png}
+  \end{minipage}\hfill
+  \begin{minipage}{0.48\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{assets/images/siliceous-sinter.png}
+  \end{minipage}
+  \caption{Ejemplos de ilustraciones de proceso para clases síliceas}
+  \label{fig:siliceas}
+\end{figure}
+
+\subsection{Estado de la aplicación}
+
+La aplicación Litoteca se encuentra desplegada en Cloudflare Pages
+\cite{litotecaapp}. El repositorio público está en GitHub \cite{litotecarepo}. La
+Tabla~\ref{tab:funcionalidades} resume el estado de las funcionalidades relevantes
+para la entrega.
+
+\begin{table}[H]
+  \centering
+  \caption{Estado de funcionalidades implementadas}
+  \label{tab:funcionalidades}
+  \begin{tabular}{@{}p{4.3cm}p{8.1cm}@{}}
+    \toprule
+    Funcionalidad & Estado \\
+    \midrule
+    Carga/captura de imagen & Implementada, con validación de tipo y tamaño. \\
+    Ficha por clase & Implementada para las 9 clases, con extractos cacheados de Wikipedia~\cite{wikipedia}. \\
+    Historial local & Implementado con \texttt{localStorage}. \\
+    Proxy de predicción & Implementado en \texttt{functions/api/predict.js}. \\
+    Guardrail roca/no-roca & Implementado; el detector binario se consulta antes del clasificador y responde HTTP 422 con código \texttt{no\_es\_roca}. \\
+    Modo sin conexión & Implementado con service worker y mensaje honesto para predicción en línea~\cite{w3cserviceworkers}. \\
+    Despliegue CF Pages & Implementado con GitHub Actions y Wrangler. \\
+    Quick v2 publicado & Conectado como iteración verificada de clasificación multiclase. \\
+    Quick v3 evaluado & Completado (P 79.70\%, R 54.58\%, AP 74.64\%; validación API 96/146, 65.75\%); no superó a Quick v2, se mantiene Quick v2 en producción. \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.75\linewidth]{assets/images/og-image.png}
+  \caption{Vista de identidad visual de Litoteca}
+  \label{fig:og}
+\end{figure}
+
+\subsection{Validación sintética por API}
+
+Se ejecutó una validación sintética contra la iteración publicada actualmente como
+\texttt{litoteca-v1} (Quick v2, \texttt{4792fd31-2f7a-4505-9c72-71c1c3ffe4b8}) usando
+el conjunto \texttt{data/prepared-clean-train/test} (146 imágenes, una por cluster,
+sin fuga). La llamada se realizó al endpoint de predicción de Custom Vision con el
+mismo contrato que consume la aplicación.
+
+\begin{table}[H]
+  \centering
+  \caption{Validación sintética por API (test limpio, Quick v2)}
+  \label{tab:api-test}
+  \begin{tabular}{@{}lrrr@{}}
+    \toprule
+    Clase & Aciertos & Total & Accuracy \\
+    \midrule
+    basalt & 14 & 15 & 93.33\% \\
+    chert & 9 & 14 & 64.29\% \\
+    clay & 5 & 12 & 41.67\% \\
+    conglomerate & 6 & 13 & 46.15\% \\
+    diatomite & 12 & 19 & 63.16\% \\
+    gypsum & 18 & 23 & 78.26\% \\
+    olivine-basalt & 17 & 19 & 89.47\% \\
+    shale & 13 & 20 & 65.00\% \\
+    siliceous-sinter & 7 & 11 & 63.64\% \\
+    \midrule
+    \textbf{Total} & \textbf{101} & \textbf{146} & \textbf{69.18\%} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Frente a Quick v1 (95/146, 65.07\%), Quick v2 mejora en 6 aciertos (+4.11 puntos
+porcentuales). Los errores más frecuentes se concentran en clases visualmente
+cercanas: \emph{conglomerate}$\rightarrow$\emph{clay} (4),
+\emph{diatomite}$\rightarrow$\emph{chert} (3),
+\emph{chert}$\rightarrow$\emph{clay} (2),
+\emph{clay}$\rightarrow$\emph{shale} (2),
+\emph{conglomerate}$\rightarrow$\emph{siliceous-sinter} (2),
+\emph{diatomite}$\rightarrow$\emph{clay} (2),
+\emph{shale}$\rightarrow$\emph{diatomite} (2),
+\emph{shale}$\rightarrow$\emph{basalt} (2) y
+\emph{siliceous-sinter}$\rightarrow$\emph{shale} (2). Este patrón confirma que la
+similitud visual entre clases síliceas y arcillosas sigue siendo la principal fuente
+de confusión.

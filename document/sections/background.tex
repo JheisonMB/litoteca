@@ -1,28 +1,30 @@
-\chapter{Marco conceptual}
-\label{ch:background}
+\section{Marco conceptual}
+\label{sec:background}
 
-\section{Clasificación de imágenes}
+\subsection{Clasificación de imágenes}
 
 La clasificación de imágenes es una tarea de visión por computador donde un modelo
-asigna una etiqueta a una imagen de entrada. En este proyecto, la entrada es una
-fotografía de una roca y la salida es una de nueve clases posibles. El modelo
-devuelve probabilidades por clase; la aplicación usa la clase con mayor probabilidad
-como predicción principal y muestra también alternativas cercanas.
+asigna una etiqueta a una imagen de entrada~\cite{lecun2015deep,he2016deep}. En
+este proyecto, la entrada es una fotografía de una roca y la salida es una de nueve
+clases posibles. El modelo devuelve probabilidades por clase; la aplicación usa la
+clase con mayor probabilidad como predicción principal y muestra también
+alternativas cercanas.
 
-\section{Azure Custom Vision}
+\subsection{Azure Custom Vision}
 
-Azure Custom Vision es un servicio de Azure Cognitive Services para entrenar
-modelos de clasificación y detección de objetos con un flujo gestionado. Permite
-cargar imágenes etiquetadas, entrenar iteraciones, evaluar el desempeño y publicar
-un endpoint de predicción~\cite{azurecustomvision}.
+Azure Custom Vision es un servicio de Azure AI para entrenar modelos de
+clasificación y detección de objetos con un flujo gestionado. Permite cargar
+imágenes etiquetadas, entrenar iteraciones, evaluar el desempeño y publicar un
+endpoint de predicción~\cite{azurecustomvision}.
 
 Para Litoteca se seleccionó Custom Vision por su facilidad para entrenar un
 clasificador multiclase, exponer una API de predicción y separar el entrenamiento
 del consumo desde una aplicación web. La aplicación no expone las credenciales al
-navegador: un proxy en Cloudflare Pages recibe la imagen y consulta la API de
-predicción.
+navegador: una Pages Function en Cloudflare Pages recibe la imagen, consulta la
+API de predicción y devuelve una respuesta normalizada al
+frontend~\cite{cloudflarefunctions}.
 
-\section{Métricas de evaluación}
+\subsection{Métricas de evaluación}
 
 La evaluación de un clasificador multiclase se apoya en métricas derivadas de la
 matriz de confusión. Para cada clase se consideran verdaderos positivos (VP),
@@ -43,14 +45,16 @@ falsos positivos (FP) y falsos negativos (FN).
   \label{eq:f1}
 \end{equation}
 
-Además, la curva ROC y el área bajo la curva (AUC) permiten analizar el
-comportamiento del modelo según el umbral de decisión. En la entrega final, estas
-métricas se reportarán con la iteración entrenada y publicada de Custom Vision.
+La precisión resume qué tan confiables son las predicciones positivas, el recall
+mide la cobertura sobre los casos reales de la clase y F1 balancea ambos. En Custom
+Vision, la AP (average precision) resume el comportamiento de la curva
+precisión-recall por clase.
 
-\section{Clases del prototipo}
+\subsection{Clases del prototipo}
 
 El prototipo considera nueve clases, seleccionadas por disponibilidad en el dataset
-y por su valor didáctico. La Tabla~\ref{tab:clases} resume la taxonomía usada.
+y por su valor didáctico. La Tabla~\ref{tab:clases} resume la taxonomía usada por
+la aplicación.
 
 \begin{table}[H]
   \centering
@@ -68,7 +72,7 @@ y por su valor didáctico. La Tabla~\ref{tab:clases} resume la taxonomía usada.
     diatomite & Diatomita & Diatomite & Sedimentario \\
     gypsum & Yeso & Gypsum & Sedimentario \\
     shale & Lutita & Shale (mudstone) & Sedimentario \\
-    siliceous-sinter & Sinter silíceo & Siliceous sinter & Sedimentario \\
+    siliceous-sinter & Geiserita & Siliceous sinter & Sedimentario \\
     \bottomrule
   \end{tabular}
 \end{table}

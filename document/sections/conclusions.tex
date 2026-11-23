@@ -1,0 +1,29 @@
+\section{Conclusiones}
+\label{sec:conclusions}
+
+Litoteca integra un flujo completo de clasificación de rocas en una aplicación web
+móvil: preparación trazable del dataset, entrenamiento en Azure Custom Vision, proxy
+de predicción en Cloudflare Pages y una interfaz que presenta la predicción con
+contexto geológico. El aporte principal no es solo la etiqueta de clase, sino la
+combinación de clasificación, guardrail roca/no-roca y ficha explicativa para un
+usuario no experto.
+
+La preparación de datos fue decisiva para la credibilidad del modelo. La
+deduplicación por imagen original, la reconstrucción de splits sin fuga y la
+exclusión de conflictos de etiqueta redujeron el riesgo de métricas optimistas. Los
+resultados verificados de Quick v2 y del detector roca/no-roca muestran un prototipo
+funcional, con buen desempeño en varias clases y confusiones concentradas en
+familias visualmente cercanas.
+
+Como limitaciones actuales, el prototipo cubre nueve clases ígneas y sedimentarias,
+depende de la calidad de la fotografía y del endpoint de predicción, y mantiene
+recall bajo en clases difíciles como \emph{shale}, \emph{clay} y \emph{chert}. La
+validación sintética por API aporta evidencia reproducible, pero no sustituye una
+evaluación de campo más amplia.
+
+El documento se cierra con Quick v3 evaluado: obtuvo P 79.70\%, R 54.58\% y AP
+74.64\%, con validación sintética API de 96/146 (65.75\%), sin superar a Quick v2.
+Por ello, la entrega se mantiene con Quick v2 como modelo publicado. El
+entrenamiento Advanced permanece como trabajo futuro: si completa y mejora el
+desempeño verificado, podrá conectarse por debajo del mismo contrato de la
+aplicación sin cambiar la experiencia de usuario.

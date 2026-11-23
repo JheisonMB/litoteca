@@ -1,7 +1,7 @@
 [document]
 title = "Litoteca: clasificación de rocas con visión por computador"
 author = "Jheison Martinez Bolivar"
-template = "report"
+template = "general"
 
 [build]
 entry = "main.tex"

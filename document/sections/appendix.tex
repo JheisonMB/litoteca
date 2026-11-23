@@ -1,7 +1,7 @@
-\chapter{Material suplementario}
+\section{Material suplementario}
 \label{app:supplementary}
 
-\section{Enlaces del proyecto}
+\subsection{Enlaces del proyecto}
 
 \begin{table}[H]
   \centering
@@ -13,22 +13,21 @@
     \midrule
     Repositorio GitHub & \url{https://github.com/JheisonMB/litoteca} \\
     Aplicación desplegada & \url{https://litoteca.pages.dev/} \\
-    Mock de fichas & \url{https://litoteca.pages.dev/?mock=1} \\
-    Galería de fichas & \url{https://litoteca.pages.dev/?galeria=1} \\
+    Demo en video & \url{https://youtu.be/X435kZhNOG8} \\
     Dataset fuente & \url{https://www.kaggle.com/datasets/stealthtechnologies/rock-classification} \\
-    Custom Vision & \url{https://azure.microsoft.com/services/cognitive-services/custom-vision-service/} \\
+    Azure Custom Vision & \url{https://learn.microsoft.com/azure/ai-services/custom-vision-service/overview} \\
     \bottomrule
   \end{tabular}
 \end{table}
 
-\section{Trazabilidad del dataset}
+\subsection{Trazabilidad del dataset}
 
 El dataset preparado incluye los siguientes artefactos en \texttt{data/prepared/}:
 
 \begin{itemize}
   \item \texttt{manifest.csv}: procedencia, split, clase, hash perceptual.
   \item \texttt{stats.json}: conteos por clase y motivos de descarte.
-  \item \texttt{conflicts.csv}: 22 pares con etiqueta contradictoria.
+  \item \texttt{conflicts.csv}: pares con etiqueta contradictoria.
   \item \texttt{near\_duplicates.csv}: casi-duplicados entre clusters.
   \item \texttt{descartadas.csv}: registros excluidos.
 \end{itemize}
@@ -37,7 +36,7 @@ Para el entrenamiento limpio se generó \texttt{data/prepared-clean-train/} con 
 imagen por cluster y exclusión de conflictos de etiqueta. El reporte de limpieza se
 encuentra en \texttt{clean\_report.json}.
 
-\section{Evidencia de despliegue}
+\subsection{Variables de runtime de la Function}
 
 El despliegue se realiza con GitHub Actions (\texttt{.github/workflows/deploy.yml})
 y Cloudflare Wrangler. Los secretos del modelo se configuran en Cloudflare Pages
@@ -48,4 +47,7 @@ como variables de runtime de la Function, no en el frontend:
   \item \texttt{CUSTOM\_VISION\_KEY}
   \item \texttt{CUSTOM\_VISION\_PROJECT}
   \item \texttt{CUSTOM\_VISION\_ITERATION}
+  \item \texttt{CUSTOM\_VISION\_DETECTOR\_PROJECT}
+  \item \texttt{CUSTOM\_VISION\_DETECTOR\_ITERATION}
+  \item \texttt{CUSTOM\_VISION\_TRAINED} (opcional, metadato de despliegue)
 \end{itemize}
