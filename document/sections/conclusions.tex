@@ -11,7 +11,7 @@ usuario no experto.
 La preparación de datos fue decisiva para la credibilidad del modelo. La
 deduplicación por imagen original, la reconstrucción de splits sin fuga y la
 exclusión de conflictos de etiqueta redujeron el riesgo de métricas optimistas. Los
-resultados verificados de Quick v2 y del detector roca/no-roca muestran un prototipo
+resultados verificados de la iteración Advanced y del detector roca/no-roca muestran un prototipo
 funcional, con buen desempeño en varias clases y confusiones concentradas en
 familias visualmente cercanas.
 
@@ -21,9 +21,9 @@ recall bajo en clases difíciles como \emph{shale}, \emph{clay} y \emph{chert}. 
 validación sintética por API aporta evidencia reproducible, pero no sustituye una
 evaluación de campo más amplia.
 
-El documento se cierra con Quick v3 evaluado: obtuvo P 79.70\%, R 54.58\% y AP
-74.64\%, con validación sintética API de 96/146 (65.75\%), sin superar a Quick v2.
-Por ello, la entrega se mantiene con Quick v2 como modelo publicado. El
-entrenamiento Advanced permanece como trabajo futuro: si completa y mejora el
-desempeño verificado, podrá conectarse por debajo del mismo contrato de la
-aplicación sin cambiar la experiencia de usuario.
+El documento se cierra con la iteración Advanced como modelo final: obtuvo P
+98.66\%, R 96.22\% y AP 98.42\%, con validación sintética API de 109/146 (74.66\%),
+superando a Quick v2 (101/146, 69.18\%). Se publicó como \texttt{litoteca-v2} y se
+conectó a la aplicación sin cambiar el contrato de la API. Quick v3 quedó evaluado
+(P 79.70\%, R 54.58\%, AP 74.64\%; 96/146, 65.75\%) y no se promovió. La demo en
+video está disponible en \url{https://youtu.be/X435kZhNOG8}.
