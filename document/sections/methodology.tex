@@ -151,7 +151,8 @@ captura de los proyectos usados en el espacio de trabajo.
   \label{fig:custom-vision}
 \end{figure}
 
-Se trabajaron tres iteraciones Quick completadas sobre el dataset limpio:
+Se trabajaron tres iteraciones Quick completadas sobre el dataset limpio y una
+iteración Advanced que terminó siendo la de mejor desempeño:
 
 \begin{itemize}
   \item \textbf{Quick v1} (proyecto \texttt{litoteca-clean-quick}, iteración
@@ -159,8 +160,9 @@ Se trabajaron tres iteraciones Quick completadas sobre el dataset limpio:
         completada, con validación API de 95/146 aciertos (65.07\%).
   \item \textbf{Quick v2} (proyecto \texttt{litoteca-clean-quick-v2}, iteración
         \texttt{4792fd31-2f7a-4505-9c72-71c1c3ffe4b8}): entrenamiento completado,
-        publicado como \texttt{litoteca-v1} en \texttt{labunisalle-Prediction} y
-        conectado a la aplicación.
+        publicado como \texttt{litoteca-v1} en \texttt{labunisalle-Prediction};
+        luego fue reemplazado por la iteración Advanced publicada como
+        \texttt{litoteca-v2}.
 \end{itemize}
 
 \begin{table}[H]
@@ -174,36 +176,15 @@ Se trabajaron tres iteraciones Quick completadas sobre el dataset limpio:
     Quick v1 (6276ca2b) & 83.08\% & 52.43\% & 72.74\% \\
     Quick v2 (4792fd31) & 84.88\% & 54.48\% & 77.77\% \\
     Quick v3 (9354cec6) & 79.70\% & 54.58\% & 74.64\% \\
+    Advanced (d538f641) & 98.66\% & 96.22\% & 98.42\% \\
     \bottomrule
   \end{tabular}
 \end{table}
 
-\begin{table}[H]
-  \centering
-  \caption{Métricas por clase de Quick v2}
-  \label{tab:metricas-clase}
-  \begin{tabular}{@{}lrrr@{}}
-    \toprule
-    Clase & Precision & Recall & AP \\
-    \midrule
-    basalt & 79.31\% & 69.70\% & 85.43\% \\
-    chert & 85.71\% & 38.71\% & 73.81\% \\
-    clay & 90.00\% & 30.00\% & 64.94\% \\
-    conglomerate & 100.00\% & 77.42\% & 93.16\% \\
-    diatomite & 76.19\% & 59.26\% & 69.36\% \\
-    gypsum & 89.47\% & 54.84\% & 78.59\% \\
-    olivine-basalt & 91.30\% & 75.00\% & 92.49\% \\
-    shale & 63.64\% & 22.58\% & 58.42\% \\
-    siliceous-sinter & 80.95\% & 65.38\% & 78.43\% \\
-    \bottomrule
-  \end{tabular}
-\end{table}
-
-Quick v2 mejora las métricas globales respecto a Quick v1, especialmente en AP.
-El desempeño es fuerte en \emph{conglomerate}, \emph{olivine-basalt},
-\emph{basalt} y \emph{gypsum}, mientras que \emph{shale}, \emph{clay} y
-\emph{chert} mantienen recall bajo, coherente con la similitud visual entre clases
-documentada en la preparación del dataset.
+La iteración Advanced mejora las métricas globales respecto a todas las Quick,
+especialmente en recall y AP. El desempeño es alto y parejo en las nueve clases,
+incluidas las que concentraban confusión en las iteraciones anteriores
+(\emph{shale}, \emph{clay} y \emph{chert}).
 
 \subsubsection{Quick v3 y decisión de cierre}
 
@@ -217,10 +198,39 @@ débiles/confusas (\emph{chert}, \emph{clay}, \emph{conglomerate},
 
 Quick v3 obtuvo P 79.70\%, R 54.58\% y AP 74.64\%, con validación sintética API
 de 96/146 (65.75\%). Al no superar a Quick v2 (P 84.88\%, R 54.48\%, AP 77.77\%;
-101/146, 69.18\%), se mantiene Quick v2 publicado como \texttt{litoteca-v1} para la
-entrega. El entrenamiento Advanced del proyecto Litoteca sigue en estado
-\emph{Training}; si finaliza y mejora el desempeño verificado, podrá conectarse
-posteriormente bajo el mismo contrato de API, sin cambios en el frontend.
+101/146, 69.18\%), no se promovió.
+
+\subsubsection{Iteración Advanced y modelo final}
+
+La iteración Advanced del proyecto \texttt{litoteca}
+(\texttt{d15445ca-24b1-4bcc-aa80-244fb2b8fd6a}, iteración
+\texttt{d538f641-63da-4db3-8827-fe2e1f91cee9}) terminó después de 410 minutos de
+entrenamiento y superó ampliamente a las iteraciones Quick: P 98.66\%, R 96.22\% y
+AP 98.42\%. En la validación sintética API obtuvo 109/146 (74.66\%), frente a
+101/146 (69.18\%) de Quick v2. Por ese resultado se publicó como
+\texttt{litoteca-v2} en \texttt{labunisalle-Prediction} y se conectó a la aplicación
+como modelo final, manteniendo el mismo contrato de la API.
+
+\begin{table}[H]
+  \centering
+  \caption{Métricas por clase de la iteración Advanced}
+  \label{tab:metricas-clase}
+  \begin{tabular}{@{}lrrr@{}}
+    \toprule
+    Clase & Precision & Recall & AP \\
+    \midrule
+    basalt & 97.53\% & 98.75\% & 98.72\% \\
+    chert & 98.61\% & 93.42\% & 97.15\% \\
+    clay & 100.00\% & 91.46\% & 96.78\% \\
+    conglomerate & 100.00\% & 97.59\% & 98.87\% \\
+    diatomite & 97.40\% & 97.40\% & 97.69\% \\
+    gypsum & 98.59\% & 95.89\% & 99.89\% \\
+    olivine-basalt & 100.00\% & 98.61\% & 100.00\% \\
+    shale & 97.30\% & 97.30\% & 98.72\% \\
+    siliceous-sinter & 98.55\% & 95.77\% & 98.51\% \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
 \subsubsection{Detector roca/no-roca}
 

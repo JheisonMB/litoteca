@@ -57,8 +57,8 @@ para la entrega.
     Guardrail roca/no-roca & Implementado; el detector binario se consulta antes del clasificador y responde HTTP 422 con código \texttt{no\_es\_roca}. \\
     Modo sin conexión & Implementado con service worker y mensaje honesto para predicción en línea~\cite{w3cserviceworkers}. \\
     Despliegue CF Pages & Implementado con GitHub Actions y Wrangler. \\
-    Quick v2 publicado & Conectado como iteración verificada de clasificación multiclase. \\
-    Quick v3 evaluado & Completado (P 79.70\%, R 54.58\%, AP 74.64\%; validación API 96/146, 65.75\%); no superó a Quick v2, se mantiene Quick v2 en producción. \\
+    Modelo Advanced & Publicado como \texttt{litoteca-v2} y conectado como clasificador final (P 98.66\%, R 96.22\%, AP 98.42\%). \\
+    Quick v3 evaluado & Completado (P 79.70\%, R 54.58\%, AP 74.64\%; validación API 96/146, 65.75\%); no superó a Quick v2, no se promovió. \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -73,44 +73,43 @@ para la entrega.
 \subsection{Validación sintética por API}
 
 Se ejecutó una validación sintética contra la iteración publicada actualmente como
-\texttt{litoteca-v1} (Quick v2, \texttt{4792fd31-2f7a-4505-9c72-71c1c3ffe4b8}) usando
+\texttt{litoteca-v2} (Advanced, \texttt{d538f641-63da-4db3-8827-fe2e1f91cee9}) usando
 el conjunto \texttt{data/prepared-clean-train/test} (146 imágenes, una por cluster,
 sin fuga). La llamada se realizó al endpoint de predicción de Custom Vision con el
 mismo contrato que consume la aplicación.
 
 \begin{table}[H]
   \centering
-  \caption{Validación sintética por API (test limpio, Quick v2)}
+  \caption{Validación sintética por API (test limpio, Advanced)}
   \label{tab:api-test}
   \begin{tabular}{@{}lrrr@{}}
     \toprule
     Clase & Aciertos & Total & Accuracy \\
     \midrule
     basalt & 14 & 15 & 93.33\% \\
-    chert & 9 & 14 & 64.29\% \\
-    clay & 5 & 12 & 41.67\% \\
-    conglomerate & 6 & 13 & 46.15\% \\
+    chert & 11 & 14 & 78.57\% \\
+    clay & 6 & 12 & 50.00\% \\
+    conglomerate & 9 & 13 & 69.23\% \\
     diatomite & 12 & 19 & 63.16\% \\
-    gypsum & 18 & 23 & 78.26\% \\
-    olivine-basalt & 17 & 19 & 89.47\% \\
-    shale & 13 & 20 & 65.00\% \\
-    siliceous-sinter & 7 & 11 & 63.64\% \\
+    gypsum & 19 & 23 & 82.61\% \\
+    olivine-basalt & 18 & 19 & 94.74\% \\
+    shale & 11 & 20 & 55.00\% \\
+    siliceous-sinter & 9 & 11 & 81.82\% \\
     \midrule
-    \textbf{Total} & \textbf{101} & \textbf{146} & \textbf{69.18\%} \\
+    \textbf{Total} & \textbf{109} & \textbf{146} & \textbf{74.66\%} \\
     \bottomrule
   \end{tabular}
 \end{table}
 
-Frente a Quick v1 (95/146, 65.07\%), Quick v2 mejora en 6 aciertos (+4.11 puntos
-porcentuales). Los errores más frecuentes se concentran en clases visualmente
-cercanas: \emph{conglomerate}$\rightarrow$\emph{clay} (4),
+Frente a Quick v2 (101/146, 69.18\%), la iteración Advanced mejora en 8 aciertos
+(+5.48 puntos porcentuales). Los errores remanentes se concentran en clases
+visualmente cercanas: \emph{conglomerate}$\rightarrow$\emph{siliceous-sinter} (3),
 \emph{diatomite}$\rightarrow$\emph{chert} (3),
-\emph{chert}$\rightarrow$\emph{clay} (2),
+\emph{shale}$\rightarrow$\emph{conglomerate} (3),
+\emph{chert}$\rightarrow$\emph{diatomite} (2),
 \emph{clay}$\rightarrow$\emph{shale} (2),
-\emph{conglomerate}$\rightarrow$\emph{siliceous-sinter} (2),
-\emph{diatomite}$\rightarrow$\emph{clay} (2),
-\emph{shale}$\rightarrow$\emph{diatomite} (2),
-\emph{shale}$\rightarrow$\emph{basalt} (2) y
-\emph{siliceous-sinter}$\rightarrow$\emph{shale} (2). Este patrón confirma que la
-similitud visual entre clases síliceas y arcillosas sigue siendo la principal fuente
-de confusión.
+\emph{clay}$\rightarrow$\emph{siliceous-sinter} (2),
+\emph{shale}$\rightarrow$\emph{chert} (2),
+\emph{shale}$\rightarrow$\emph{diatomite} (2) y
+\emph{siliceous-sinter}$\rightarrow$\emph{chert} (2). La mejora es consistente con
+las métricas de entrenamiento y reduce la brecha entre validación y uso real.

@@ -99,12 +99,13 @@
     aumentos sintéticos redundantes y conflictos de etiqueta.
 
     La aplicación fue desplegada como sitio estático en Cloudflare Pages, con una
-    Pages Function que actúa como proxy del modelo. Se entrenaron y publicaron una
-    iteración Quick v2 para clasificación multiclase y un detector binario
-    roca/no-roca como guardrail. Se evaluó Quick v3; al no superar a Quick v2
-    (96/146 vs 101/146 en validación sintética API), se mantiene Quick v2 como
-    modelo publicado. El documento consolida la arquitectura, el proceso de datos,
-    los resultados verificados y la validación sintética disponible.
+    Pages Function que actúa como proxy del modelo. Se entrenaron iteraciones Quick
+    y una iteración Advanced para clasificación multiclase, además de un detector
+    binario roca/no-roca como guardrail. La iteración Advanced se publicó como
+    \texttt{litoteca-v2} por su mejor desempeño verificado (109/146 vs 101/146 de
+    Quick v2 en validación sintética API) y quedó conectada a la aplicación. El
+    documento consolida la arquitectura, el proceso de datos, los resultados
+    verificados y la validación sintética disponible.
   \end{abstract}
 
   \clearpage
