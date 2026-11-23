@@ -1,0 +1,30 @@
+\section{Introducción}
+\label{sec:intro}
+
+Litoteca es un proyecto de visión por computador aplicado al reconocimiento de
+muestras de roca. Su contexto es educativo y de divulgación: una persona puede
+encontrar una piedra en campo, en una colección didáctica o en un ejercicio de
+clase, y necesitar una primera orientación sobre qué tipo de roca está observando.
+El área de aplicación es el reconocimiento de objetos mediante clasificación de
+imágenes~\cite{lecun2015deep}, donde una fotografía tomada con el celular o cargada
+desde el dispositivo se analiza para predecir la clase más probable entre nueve
+tipos de roca.
+
+El problema no se limita a asignar una etiqueta. Clases como chert, diatomita o
+geiserita (sinter silíceo) pueden compartir rasgos visuales, por lo que el sistema
+debe acompañar la predicción con información interpretable: confianza, alternativas
+probables y una ficha que explique qué es la roca, cómo se formó y con qué puede
+confundirse. La predicción funciona como apoyo visual y pedagógico, no como
+sustitución de un análisis de laboratorio.
+
+El objetivo del trabajo es implementar un modelo de clasificación de rocas en
+Azure Custom Vision~\cite{azurecustomvision} e integrarlo en una aplicación web
+práctica. El prototipo cubre nueve clases (basalto, basalto olivínico, sílex/chert,
+arcilla, conglomerado, lutita, diatomita, geiserita y yeso), usa un dataset
+preparado y depurado, y se despliega como sitio estático en Cloudflare
+Pages~\cite{cloudflarepages} con una Pages Function que actúa como proxy de
+predicción~\cite{cloudflarefunctions}. La iteración Quick v2 del clasificador y un
+detector binario roca/no-roca están publicados y conectados a la aplicación
+desplegada~\cite{litotecaapp,litotecarepo}. Al cierre de esta entrega se evaluó
+Quick v3; al no superar a Quick v2 en métricas globales ni en validación sintética
+API, se mantiene Quick v2 como modelo publicado para la entrega.

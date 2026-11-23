@@ -1,14 +1,13 @@
-\chapter{Metodología}
-\label{ch:methodology}
+\section{Metodología}
+\label{sec:methodology}
 
-\section{Flujo general}
+\subsection{Flujo general}
 
 El desarrollo siguió un flujo iterativo: definición del contexto y clases,
 preparación del dataset, construcción de la aplicación web, integración del proxy
 de predicción, entrenamiento del modelo en Custom Vision y validación del producto.
 Antes de clasificar la roca, la API aplica un detector binario roca/no-roca para
-rechazar imágenes fuera de dominio. El siguiente diagrama resume el flujo de
-interacción en la aplicación.
+rechazar imágenes fuera de dominio. El siguiente diagrama resume el flujo de interacción en la aplicación.
 
 \begin{mermaid}[style=editorial, width=0.95\linewidth, pos=H, caption={Flujo general de predicción en Litoteca}]
   sequenceDiagram
@@ -20,38 +19,26 @@ interacción en la aplicación.
     participant WK as Wiki cache (build)
 
     U->>W: Captura o carga imagen
-    activate W
     W->>W: Preprocesa y valida imagen
     W->>F: POST /api/predict
-    activate F
     F->>CV: Solicita detección roca/no-roca
-    activate CV
-    CV-->>F: Probabilidades rock / not_rock
-    deactivate CV
+    CV-->>F: Probabilidades rock / not rock
     alt No es roca o rock < 0.5
-      F-->>W: 422 no_es_roca
-      deactivate F
+      F-->>W: 422 no es roca
       W-->>U: Muestra mensaje: no se identificó roca
-      deactivate W
     else Es roca
       F->>CV: Solicita clasificación por clase
-      activate CV
       CV-->>F: Predicciones por clase
-      deactivate CV
       F-->>W: JSON normalizado (top, confianza, margen)
-      deactivate F
       W->>WK: Consulta extracto cacheado
-      activate WK
       WK-->>W: Extracto y fuente CC BY-SA
-      deactivate WK
       W-->>U: Muestra ficha, confianza, gemelas y contexto
-      deactivate W
     end
 \end{mermaid}
 
-\section{Selección y preparación del dataset}
+\subsection{Selección y preparación del dataset}
 
-\subsection{Fuente}
+\subsubsection{Fuente}
 
 Se utilizó el dataset \emph{Rock Classification} de Kaggle, exportado originalmente
 desde Roboflow~\cite{rockdataset}. El export contenía 4.212 imágenes en 9 clases,
@@ -60,9 +47,9 @@ espejo, recorte, brillo/exposición, entre otros).
 
 La copia local del dataset se mantuvo en \texttt{data/raw/rock-data} y el resultado
 preparado en \texttt{data/prepared}. Por tamaño, \texttt{data/} no se versiona en
-Git; se documenta su reconstrucción con \texttt{tools/prepare\_dataset.py}.
+Git; su reconstrucción se documenta con \texttt{tools/prepare\_dataset.py}.
 
-\subsection{Problemas encontrados}
+\subsubsection{Problemas encontrados}
 
 El análisis inicial detectó dos problemas importantes:
 
@@ -72,17 +59,17 @@ El análisis inicial detectó dos problemas importantes:
         y valid, 43 entre train y test, y 15 entre valid y test.
   \item \textbf{Conflictos de etiqueta}: 22 pares de imágenes casi idénticas tenían
         etiquetas distintas, especialmente entre clases síliceas como chert,
-        diatomite y siliceous-sinter.
+        diatomite y geiserita.
 \end{itemize}
 
-\subsection{Limpieza y reconstrucción}
+\subsubsection{Limpieza y reconstrucción}
 
 El script \texttt{tools/prepare\_dataset.py} realizó:
 
 \begin{enumerate}
   \item Agrupación por imagen original (cluster), no por archivo aumentado.
   \item Cálculo de hash perceptual \texttt{dHash} para detectar duplicados y
-        casi-duplicados.
+        casi-duplicados~\cite{zauner2010implementation}.
   \item Reconstrucción de splits sin intersección de clusters: 85/15 estratificado
         para train/valid sobre originales no reservados a test.
   \item En valid/test se conservó un representante por cluster (medoid).
@@ -106,7 +93,7 @@ El script \texttt{tools/prepare\_dataset.py} realizó:
     Lutita & 195 & 367 & 26 & 20 \\
     Diatomita & 198 & 383 & 22 & 19 \\
     Sílex & 195 & 379 & 21 & 14 \\
-    Sinter silíceo & 181 & 354 & 21 & 11 \\
+    Geiserita & 181 & 354 & 21 & 11 \\
     Yeso & 197 & 364 & 25 & 23 \\
     \midrule
     \textbf{Total} & \textbf{1754} & \textbf{3428} & \textbf{209} & \textbf{146} \\
@@ -114,17 +101,17 @@ El script \texttt{tools/prepare\_dataset.py} realizó:
   \end{tabular}
 \end{table}
 
-\subsection{Versión limpia para Custom Vision}
+\subsubsection{Versión limpia para Custom Vision}
 
-Para un nuevo entrenamiento se generó \texttt{data/prepared-clean-train} con la
-política: \textbf{una imagen por cluster} en todos los splits, excluyendo clusters
+Para el entrenamiento en Custom Vision se generó \texttt{data/prepared-clean-train}
+con la política: una imagen por cluster en todos los splits, excluyendo clusters
 involucrados en conflictos de etiqueta. Los casi-duplicados entre clusters se
 marcaron en reporte, pero no se eliminaron automáticamente para evitar una limpieza
 demasiado agresiva sin revisión visual.
 
 \begin{table}[H]
   \centering
-  \caption{Dataset limpio usado para el nuevo entrenamiento}
+  \caption{Dataset limpio usado para entrenamiento}
   \label{tab:dataset-clean}
   \begin{tabular}{@{}lrrr@{}}
     \toprule
@@ -138,7 +125,7 @@ demasiado agresiva sin revisión visual.
     Yeso & 144 & 25 & 23 \\
     Basalto olivínico & 143 & 18 & 19 \\
     Lutita & 145 & 26 & 20 \\
-    Sinter silíceo & 137 & 21 & 11 \\
+    Geiserita & 137 & 21 & 11 \\
     \midrule
     \textbf{Total} & \textbf{1325} & \textbf{209} & \textbf{146} \\
     \bottomrule
@@ -149,27 +136,93 @@ Esta versión reduce redundancia sintética y evita que el modelo aprenda artefa
 de aumentos del export. Custom Vision puede aplicar sus propias transformaciones de
 entrenamiento; por eso se prefirió subir imágenes limpias.
 
-\section{Entrenamiento del modelo}
+\subsection{Entrenamiento y modelos}
 
-\subsection{Clasificador multiclase}
+\subsubsection{Clasificador multiclase}
 
-El entrenamiento se realiza en Azure Custom Vision. Se creó un proyecto multiclase
-de Litoteca y se cargaron las imágenes por etiqueta. Se probaron dos enfoques:
+El entrenamiento se realizó en Azure Custom Vision con un proyecto multiclase de
+Litoteca~\cite{azurecustomvision}. La Figura~\ref{fig:custom-vision} muestra la
+captura de los proyectos usados en el espacio de trabajo.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\linewidth]{assets/images/custom-vision-projects.png}
+  \caption{Proyectos de Litoteca en Azure Custom Vision, incluyendo las iteraciones Quick y el detector roca/no-roca.}
+  \label{fig:custom-vision}
+\end{figure}
+
+Se trabajaron tres iteraciones Quick completadas sobre el dataset limpio:
 
 \begin{itemize}
-  \item \textbf{Iteración avanzada inicial}: entrenamiento largo en el proyecto
-        original; la ejecución permaneció en estado de entrenamiento por más de 13
-        horas, por lo que se decidió validar con un proyecto limpio.
-  \item \textbf{Proyecto limpio, entrenamiento Quick}: se creó el proyecto
-        \texttt{litoteca-clean-quick}, se cargaron 1534 imágenes (train+valid
-        limpios, 1 por cluster, conflictos excluidos) y se completó un entrenamiento
-        Quick v1 (P 83.08\%, R 52.43\%, AP 72.74\%). Una segunda iteración Quick v2
-        en \texttt{litoteca-clean-quick-v2} mejoró las métricas globales (P 84.88\%,
-        R 54.48\%, AP 77.77\%) y se publicó como \texttt{litoteca-v1} en
-        \texttt{labunisalle-Prediction}.
+  \item \textbf{Quick v1} (proyecto \texttt{litoteca-clean-quick}, iteración
+        \texttt{6276ca2b-ad3e-4ca4-93ea-3be210b98771}): primera iteración
+        completada, con validación API de 95/146 aciertos (65.07\%).
+  \item \textbf{Quick v2} (proyecto \texttt{litoteca-clean-quick-v2}, iteración
+        \texttt{4792fd31-2f7a-4505-9c72-71c1c3ffe4b8}): entrenamiento completado,
+        publicado como \texttt{litoteca-v1} en \texttt{labunisalle-Prediction} y
+        conectado a la aplicación.
 \end{itemize}
 
-\subsection{Detector roca/no-roca}
+\begin{table}[H]
+  \centering
+  \caption{Comparación global entre iteraciones Quick completadas}
+  \label{tab:metricas-globales}
+  \begin{tabular}{@{}lrrr@{}}
+    \toprule
+    Iteración & Precision & Recall & AP \\
+    \midrule
+    Quick v1 (6276ca2b) & 83.08\% & 52.43\% & 72.74\% \\
+    Quick v2 (4792fd31) & 84.88\% & 54.48\% & 77.77\% \\
+    Quick v3 (9354cec6) & 79.70\% & 54.58\% & 74.64\% \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \caption{Métricas por clase de Quick v2}
+  \label{tab:metricas-clase}
+  \begin{tabular}{@{}lrrr@{}}
+    \toprule
+    Clase & Precision & Recall & AP \\
+    \midrule
+    basalt & 79.31\% & 69.70\% & 85.43\% \\
+    chert & 85.71\% & 38.71\% & 73.81\% \\
+    clay & 90.00\% & 30.00\% & 64.94\% \\
+    conglomerate & 100.00\% & 77.42\% & 93.16\% \\
+    diatomite & 76.19\% & 59.26\% & 69.36\% \\
+    gypsum & 89.47\% & 54.84\% & 78.59\% \\
+    olivine-basalt & 91.30\% & 75.00\% & 92.49\% \\
+    shale & 63.64\% & 22.58\% & 58.42\% \\
+    siliceous-sinter & 80.95\% & 65.38\% & 78.43\% \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Quick v2 mejora las métricas globales respecto a Quick v1, especialmente en AP.
+El desempeño es fuerte en \emph{conglomerate}, \emph{olivine-basalt},
+\emph{basalt} y \emph{gypsum}, mientras que \emph{shale}, \emph{clay} y
+\emph{chert} mantienen recall bajo, coherente con la similitud visual entre clases
+documentada en la preparación del dataset.
+
+\subsubsection{Quick v3 y decisión de cierre}
+
+Se entrenó Quick v3 como iteración curada adicional (proyecto
+\texttt{litoteca-clean-quick-v3}, \texttt{601da1f6-4fa9-47c0-9177-26284667cc56},
+iteración \texttt{9354cec6-b49a-400e-9ce9-0c4230254fd9}, tipo \texttt{Quick}).
+El dataset de entrenamiento partió de v2 y recuperó 131 imágenes de v1 en clases
+débiles/confusas (\emph{chert}, \emph{clay}, \emph{conglomerate},
+\emph{diatomite}, \emph{shale}, \emph{siliceous-sinter}), quedando en 1278 train,
+193 valid y 144 test.
+
+Quick v3 obtuvo P 79.70\%, R 54.58\% y AP 74.64\%, con validación sintética API
+de 96/146 (65.75\%). Al no superar a Quick v2 (P 84.88\%, R 54.48\%, AP 77.77\%;
+101/146, 69.18\%), se mantiene Quick v2 publicado como \texttt{litoteca-v1} para la
+entrega. El entrenamiento Advanced del proyecto Litoteca sigue en estado
+\emph{Training}; si finaliza y mejora el desempeño verificado, podrá conectarse
+posteriormente bajo el mismo contrato de API, sin cambios en el frontend.
+
+\subsubsection{Detector roca/no-roca}
 
 Para reducir falsos positivos ante imágenes fuera de dominio, se entrenó un modelo
 binario separado en Custom Vision con dos etiquetas: \texttt{rock} y
@@ -177,49 +230,64 @@ binario separado en Custom Vision con dos etiquetas: \texttt{rock} y
 150 imágenes de roca y 150 imágenes no-roca. La iteración
 \texttt{2d92f618-115e-4a73-a9ed-006002782c7c} del proyecto
 \texttt{2dc1aedb-f66c-4fb1-abc5-54c253440052} se publicó como
-\texttt{litoteca-detector-v1} en el recurso de predicción
-\texttt{labunisalle-Prediction}.
+\texttt{litoteca-detector-v1} en \texttt{labunisalle-Prediction}.
+
+\begin{table}[H]
+  \centering
+  \caption{Métricas del detector roca/no-roca}
+  \label{tab:detector-metricas}
+  \begin{tabular}{@{}lrrr@{}}
+    \toprule
+    Etiqueta / Global & Precision & Recall & AP \\
+    \midrule
+    not\_rock & 100.00\% & 100.00\% & --- \\
+    rock & 100.00\% & 96.70\% & --- \\
+    \midrule
+    \textbf{Global} & \textbf{100.00\%} & \textbf{98.28\%} & \textbf{99.97\%} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
 La Function \texttt{functions/api/predict.js} consulta primero el detector. Si la
 etiqueta superior es \texttt{not\_rock} o la probabilidad de \texttt{rock} es menor
 que 0.5, la API responde con HTTP 422 y código \texttt{no\_es\_roca}; solo cuando la
-imagen pasa este guardrail se invoca el clasificador multiclase.
-
-Las credenciales y endpoints de predicción se manejan como variables de entorno en
-Cloudflare Pages, no en el frontend. Para el detector se agregaron
-\texttt{CUSTOM\_VISION\_DETECTOR\_PROJECT} y
+imagen pasa este guardrail se invoca el clasificador multiclase. Las credenciales y
+endpoints de predicción se manejan como variables de entorno en Cloudflare Pages,
+incluidos \texttt{CUSTOM\_VISION\_DETECTOR\_PROJECT} y
 \texttt{CUSTOM\_VISION\_DETECTOR\_ITERATION}.
 
-\section{Desarrollo de la aplicación}
+\subsection{Desarrollo de la aplicación}
 
-\subsection{Arquitectura}
+\subsubsection{Arquitectura}
 
 La aplicación es un sitio estático sin build: HTML, CSS y JavaScript vanilla. La
 predicción se consume mediante una Cloudflare Pages Function en
 \texttt{functions/api/predict.js}, que valida la imagen, ejecuta primero el detector
-roca/no-roca y, solo si la imagen pasa el guardrail, envía la solicitud al clasificador
-multiclase de Custom Vision. La respuesta se normaliza al contrato de Litoteca.
+roca/no-roca y, solo si la imagen pasa el guardrail, envía la solicitud al
+clasificador multiclase de Custom Vision. La respuesta se normaliza al contrato de
+Litoteca.
 
 \begin{table}[H]
   \centering
   \caption{Componentes principales de la aplicación}
   \label{tab:componentes}
-  \begin{tabular}{@{}p{3.6cm}p{8.8cm}@{}}
+  \begin{tabular}{@{}p{3.8cm}p{8.6cm}@{}}
     \toprule
     Componente & Responsabilidad \\
     \midrule
-    \texttt{index.html} & Estructura de vistas: inicio, cámara, resultado, historial. \\
-    \texttt{assets/app.js} & Lógica de UI, cámara, subida, mock, historial local. \\
+    \texttt{index.html} & Estructura de vistas: inicio, cámara, resultado e historial. \\
+    \texttt{assets/app.js} & Lógica de UI, cámara, subida, historial local y presentación de resultados. \\
     \texttt{assets/app.css} & Sistema visual editorial/papel. \\
     \texttt{assets/fichas.js} & Fichas curadas de las 9 clases. \\
+    \texttt{assets/wiki.js} & Extractos cacheados de Wikipedia con atribución CC BY-SA. \\
     \texttt{functions/api/predict.js} & Proxy a Custom Vision, guardrail roca/no-roca, validación y contrato. \\
-    \texttt{sw.js} & Service worker para modo sin conexión honesto. \\
-    \texttt{scripts/gates.sh} & Gates deterministas y pruebas de navegador. \\
+    \texttt{sw.js} & Service worker para caché de recursos estáticos y comportamiento sin conexión~\cite{w3cserviceworkers}. \\
+    \texttt{scripts/gates.sh} & Gates deterministas, pruebas de contrato y smoke test de navegador. \\
     \bottomrule
   \end{tabular}
 \end{table}
 
-\subsection{Interfaz de usuario}
+\subsubsection{Interfaz de usuario}
 
 La interfaz se diseñó con enfoque móvil, accesible y educativo. Incluye:
 
@@ -228,19 +296,18 @@ La interfaz se diseñó con enfoque móvil, accesible y educativo. Incluye:
   \item Vista de resultado con clase, confianza, margen y alternativas.
   \item Fichas con explicación: qué es, cómo se formó, gemelas y señales.
   \item Historial local en el navegador.
-  \item Modo demostración con \texttt{?mock=1} y \texttt{?galeria=1}.
   \item Modo sin conexión para recursos ya cacheados; la predicción en línea se
         desactiva cuando no hay red.
 \end{itemize}
 
-\subsection{Generación de ilustraciones}
+\subsubsection{Generación de ilustraciones}
 
 Para reforzar el valor pedagógico, se generaron ilustraciones del proceso geológico
 de cada roca. Las ilustraciones se produjeron con \texttt{facet + ComfyUI}
 (workflow \texttt{flux2-klein-4b}) a partir de una pieza reproducible
 (\texttt{tools/procesos-geologicos.toml}). Luego se optimizaron a WebP/PNG y se les
-agregaron etiquetas de texto reales manualmente, evitando texto sintético generado
-por el modelo de imagen.
+agregaron etiquetas de texto manualmente, evitando texto sintético generado por el
+modelo de imagen.
 
 \begin{figure}[H]
   \centering
@@ -249,13 +316,15 @@ por el modelo de imagen.
   \label{fig:basalt}
 \end{figure}
 
-\section{Despliegue}
+\subsection{Despliegue}
 
-La aplicación se despliega en Cloudflare Pages. El flujo de despliegue usa GitHub
-Actions con \texttt{workflow\_dispatch} desde la rama \texttt{develop}, entorno
-\texttt{production}, y \texttt{wrangler pages deploy}. Los secretos de Cloudflare se
-configuran en GitHub Environment secrets; los secretos de Custom Vision, incluidos
-los del detector roca/no-roca, se configuran en Cloudflare Pages como variables de
-runtime de la Function.
+La aplicación se despliega en Cloudflare Pages~\cite{cloudflarepages}. El flujo de
+despliegue usa GitHub Actions con \texttt{workflow\_dispatch} desde la rama
+\texttt{develop}, entorno \texttt{production}, y \texttt{wrangler pages deploy}.
+Los secretos de Cloudflare se configuran en GitHub Environment secrets; los secretos
+de Custom Vision, incluidos los del detector roca/no-roca, se configuran en
+Cloudflare Pages como variables de runtime de la Function.
 
-La versión actual está disponible en \url{https://litoteca.pages.dev/}.
+La versión pública está disponible en \url{https://litoteca.pages.dev/}
+\cite{litotecaapp}. La demo en video está disponible en
+\url{https://youtu.be/X435kZhNOG8}.
